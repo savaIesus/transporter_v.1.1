@@ -1,0 +1,30 @@
+{
+    "LEFT": {
+        "part_presence_min_confidence": 0.6,
+        "part_presence_min_windows": 1,
+        "uneven_heights_min_confidence": 0.7,
+        "uneven_heights_height_min_px": 20,
+        "uneven_heights_height_max_px": 44,
+        "uneven_heights_height_difference_px": 11,
+        "uneven_heights_min_intersection_gap_px": 7,
+        "window_sinks_min_confidence": 0.8
+    },
+
+    "MIDDLE": {
+        "bottom_glass_min_confidence": 0.1,
+        "welding_min_confidence": 0.1
+    },
+
+    "RIGHT": {
+        "part_presence_min_confidence": 0.6,
+        "part_presence_min_windows": 1,
+        "uneven_heights_min_confidence": 0.7,
+        "uneven_heights_height_min_px": 21,
+        "uneven_heights_height_max_px": 47,
+        "uneven_heights_height_difference_px": 11,
+        "uneven_heights_min_intersection_gap_px": 7,
+        "window_sinks_min_confidence": 0.8
+    },
+
+    "disabled_rules": []
+}

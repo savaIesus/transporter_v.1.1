@@ -1,0 +1,287 @@
+/* history-strip.css — Line Monitor UI module */
+
+/* ─── Bottom strip row (History + Conveyor Phase) ───────────────── */
+
+.bottom-strip-row {
+    display: flex;
+    gap: var(--gap);
+    align-items: stretch;
+    min-width: 0;
+    width: 100%;
+}
+
+.history {
+    background: var(--panel);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+    height: 78px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.history-title {
+    color: var(--text-dim);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+}
+
+.history-cards {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    gap: 5px;
+    overflow: hidden;
+    padding: 2px;
+    /* Десять карточек делят всю ширину блока поровну. */
+    justify-content: stretch;
+}
+
+.history-card {
+    /* Растягиваются на всю доступную ширину ряда; на узких окнах
+       сжимаются, надписи масштабируются через cqw. */
+    flex: 1 1 0;
+    min-width: 0;
+    border: 1px solid;
+    border-radius: var(--radius-sm);
+    container-type: inline-size;
+    padding: 3px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    transition:
+        background-color var(--t-normal) var(--ease),
+        border-color var(--t-normal) var(--ease);
+    cursor: pointer;
+}
+
+.history-card:hover {
+    border-color: var(--text-dim);
+}
+
+.history-card.cat-good    { border-color: var(--ok); background: var(--ok-bg); }
+.history-card.cat-bad     { border-color: var(--bad); background: var(--bad-bg); }
+.history-card.cat-cleanup { border-color: var(--warn); background: var(--warn-bg); }
+
+.history-card.cat-good:hover { border-color: var(--ok); }
+.history-card.cat-bad:hover { border-color: var(--bad); }
+.history-card.cat-cleanup:hover { border-color: var(--warn); }
+
+.history-card-id {
+    overflow: hidden;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    color: var(--text-dim);
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-card-symbol {
+    overflow: hidden;
+    /* 10px + узкий трекинг: «ЗАЧИСТКА» помещается в карточку без
+       обрезки, а ellipsis остаётся страховкой на узких окнах. */
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Узкие карточки: надписи ужимаются под фактическую ширину, чтобы
+   текст последних корпусов не обрубался. Там, где контейнерные
+   единицы не поддерживаются, остаётся базовый размер 10px. */
+@supports (width: 1cqw) {
+    .history-card-id {
+        font-size: clamp(7px, 22cqw, 10px);
+    }
+    .history-card-symbol {
+        font-size: clamp(6px, 15cqw, 10px);
+    }
+}
+
+.history-card.cat-good .history-card-symbol    { color: var(--ok); }
+.history-card.cat-bad .history-card-symbol     { color: var(--bad); }
+.history-card.cat-cleanup .history-card-symbol { color: var(--warn); }
+
+.history-card.history-card-placeholder {
+    border-color: var(--border);
+    background: rgba(255, 255, 255, 0.015);
+    cursor: default;
+    opacity: 0.58;
+}
+
+.history-card.history-card-placeholder:hover {
+    border-color: var(--border);
+}
+
+.history-card-placeholder .history-card-symbol {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* ─── Process Phase Block (Right side under Путь корпусов) ──────── */
+
+.process-phase-panel {
+    background: var(--panel);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+    height: 78px;
+    display: grid;
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    row-gap: 4px;
+    flex: 0 0 340px;
+    min-width: 240px;
+    max-width: 380px;
+    overflow: hidden;
+}
+
+.process-phase-head,
+.process-phase-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Заголовок и строка фазы: текст по центру, правый маркер (ШАГ / код
+   фазы) прижат к правому краю и не мешает центрированию. */
+.process-phase-head,
+.process-phase-row {
+    position: relative;
+    justify-content: center;
+}
+
+.process-phase-head .process-phase-step {
+    position: absolute;
+    right: 0;
+}
+
+.process-phase-title {
+    color: var(--text-dim);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.process-phase-step {
+    flex: 0 0 auto;
+    color: var(--text-muted);
+    font: 700 8px var(--font-mono);
+    letter-spacing: 0.35px;
+    white-space: nowrap;
+}
+
+.process-phase-row {
+    min-height: 16px;
+    align-items: center;
+}
+
+.process-phase-label {
+    min-width: 0;
+    font-family: var(--font-ui);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--accent);
+    width: 100%;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+.process-stage-track {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 2px;
+    width: 100%;
+    min-width: 0;
+    margin-top: 0;
+}
+
+.process-stage-track span {
+    min-width: 0;
+    padding: 2px 1px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--bg-1);
+    color: var(--text-muted);
+    font: 700 7px var(--font-ui);
+    letter-spacing: 0.15px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition:
+        color var(--t-fast) var(--ease),
+        background-color var(--t-fast) var(--ease),
+        border-color var(--t-fast) var(--ease);
+}
+
+.process-stage-track span.is-done {
+    color: var(--ok);
+    border-color: var(--ok);
+    background: var(--ok-bg);
+}
+
+.process-stage-track span.is-active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-glow);
+    box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.process-stage-track.is-paused span.is-active {
+    color: var(--warn);
+    border-color: var(--warn);
+    background: var(--warn-bg);
+    box-shadow: inset 0 0 0 1px var(--warn);
+}
+
+@media (max-height: 600px) {
+    .history { height: 70px; }
+    .process-phase-panel { height: 70px; }
+}
+
+@media (max-height: 500px) {
+    .history { height: 42px; }
+    .process-phase-panel { height: 60px; }
+    .history-title,
+    .process-phase-title { font-size: 8px; }
+    .process-phase-label { font-size: 9.5px; }
+    .process-stage-track span { font-size: 6px; }
+}
+
+@media (max-width: 1100px) {
+    .process-phase-panel {
+        flex-basis: 220px;
+        min-width: 170px;
+    }
+}

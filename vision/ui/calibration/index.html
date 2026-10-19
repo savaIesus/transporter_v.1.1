@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Калибровка камер</title>
+    <link rel="stylesheet" href="../static/css/base.css">
+    <link rel="stylesheet" href="../static/css/blocks.css">
+    <link rel="stylesheet" href="calibration.css">
+</head>
+<body>
+    <div class="calibration-app">
+        <header class="calibration-header" data-ui-block="calibration-header">
+            <div id="state-box" class="calibration-state state-waiting">
+                <span class="calibration-state-dot"></span>
+                <span id="state-label">ПОДГОТОВКА</span>
+            </div>
+            <div class="calibration-title-block">
+                <h1>КАЛИБРОВКА КАМЕР</h1>
+                <span>НАЗНАЧЕНИЕ ФИЗИЧЕСКИХ CAMERA ID РОЛЯМ ЛИНИИ</span>
+            </div>
+            <div class="calibration-counter">
+                <span>НАЙДЕНО</span>
+                <b id="found-count">— / 3</b>
+            </div>
+        </header>
+
+        <main class="calibration-main">
+            <section class="preview-panel" data-ui-block="calibration-preview">
+                <div class="panel-heading">
+                    <div>
+                        <span class="eyebrow">ТЕКУЩИЙ ШАГ</span>
+                        <h2 id="current-role">ПОИСК КАМЕР</h2>
+                    </div>
+                    <div id="step-counter" class="step-counter">—</div>
+                </div>
+
+                <div class="preview-shell">
+                    <img id="camera-preview" alt="Предпросмотр камеры">
+                    <div id="preview-placeholder" class="preview-placeholder">
+                        <div class="scan-indicator"></div>
+                        <strong id="placeholder-title">ПОИСК ПОДКЛЮЧЁННЫХ КАМЕР</strong>
+                        <span id="placeholder-detail">Проверка Camera ID и production-разрешения 1280×720</span>
+                    </div>
+                    <div id="camera-id-badge" class="camera-id-badge is-hidden">CAMERA ID —</div>
+                    <div id="preview-error" class="preview-error is-hidden"></div>
+                </div>
+
+                <div id="candidate-controls" class="candidate-controls is-hidden">
+                    <button id="previous-camera" class="button button-secondary" type="button">ПРЕДЫДУЩАЯ</button>
+                    <div class="candidate-position">
+                        <span>СВОБОДНАЯ КАМЕРА</span>
+                        <b id="candidate-position">—</b>
+                    </div>
+                    <button id="next-camera" class="button button-secondary" type="button">СЛЕДУЮЩАЯ</button>
+                </div>
+            </section>
+
+            <aside class="assignment-panel" data-ui-block="calibration-assignment">
+                <div class="panel-heading compact">
+                    <div>
+                        <span class="eyebrow">КОНФИГУРАЦИЯ</span>
+                        <h2>ТРИ РОЛИ</h2>
+                    </div>
+                    <div id="assigned-count" class="assigned-count">0 / 3</div>
+                </div>
+
+                <div id="role-list" class="role-list"></div>
+
+                <div id="ready-actions" class="action-stack is-hidden">
+                    <button id="assign-camera" class="button button-primary" type="button">НАЗНАЧИТЬ КАМЕРУ</button>
+                    <button id="back-step" class="button button-quiet" type="button">НАЗАД</button>
+                </div>
+
+                <div id="review-actions" class="action-stack is-hidden">
+                    <div class="review-message">
+                        Все роли назначены. Проверьте соответствие Camera ID перед сохранением.
+                    </div>
+                    <button id="save-mapping" class="button button-primary" type="button">СОХРАНИТЬ И ПРОДОЛЖИТЬ</button>
+                    <button id="review-back" class="button button-quiet" type="button">ИЗМЕНИТЬ ПОСЛЕДНЮЮ</button>
+                </div>
+
+                <div id="error-actions" class="action-stack is-hidden">
+                    <div id="fatal-error" class="fatal-error"></div>
+                    <button id="rescan" class="button" type="button">ПОВТОРИТЬ ПОИСК</button>
+                    <button id="close-error" class="button button-danger" type="button">ЗАКРЫТЬ</button>
+                </div>
+
+                <div id="saved-actions" class="action-stack is-hidden">
+                    <div class="saved-message">
+                        <strong>КОНФИГУРАЦИЯ СОХРАНЕНА</strong>
+                        <span>Основное приложение будет запущено автоматически.</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <footer class="calibration-footer" data-ui-block="calibration-footer">
+            <span>camera_mapping.json создаётся только после полного назначения 3/3</span>
+            <span id="config-path" class="config-path">—</span>
+            <button id="cancel-calibration" class="footer-exit" type="button">ВЫХОД</button>
+        </footer>
+    </div>
+
+    <script src="calibration.js"></script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+/* gallery.css — Line Monitor UI module */
+
+/* ─── Gallery modal ───────────────────────────────────────────────── */
+
+.gallery-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: galleryModalIn 0.2s var(--ease);
+}
+
+.gallery-modal.is-hidden { display: none !important; }
+
+.gallery-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.82);
+}
+
+.gallery-content {
+    position: relative;
+    width: 92vw;
+    max-width: 1400px;
+    max-height: 88vh;
+    background: var(--bg-1);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.gallery-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.gallery-title {
+    flex: 0 0 auto;
+    max-width: 240px;
+    overflow: hidden;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gallery-meta {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    min-width: 0;
+    font-family: var(--font-ui);
+    font-size: 12px;
+}
+
+.gallery-meta > span {
+    min-width: 0;
+    max-width: 100%;
+    padding: 3px 10px;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gallery-category {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Кнопка закрытия галереи — .btn.btn-icon.btn-icon-lg;
+   наведение инвертирует её в красный (деструктивное действие). */
+.gallery-close-btn {
+    flex-shrink: 0;
+    --btn-color:  var(--text-dim);
+    --btn-invert: var(--bad);
+    --btn-focus:  var(--bad);
+}
+
+.gallery-mode-toggle {
+    display: flex;
+    gap: 4px;
+    padding: 8px 24px;
+    flex-shrink: 0;
+}
+
+/* Переключатель ВИД в галерее — .btn.btn-sm; активный вариант подсвечен. */
+/* Переключатель ВИД в галерее — .btn.btn-sm; активный вариант помечен
+   акцентом и инвертируется в него же при наведении. */
+.gallery-mode-btn.active {
+    --btn-color:  var(--accent);
+    --btn-border: var(--accent);
+    --btn-invert: var(--accent);
+    --btn-focus:  var(--accent);
+    background: var(--accent-glow);
+}
+
+.gallery-grid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 12px;
+    align-content: start;
+}
+
+.gallery-grid::-webkit-scrollbar { width: 6px; }
+.gallery-grid::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+.gallery-card {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color var(--t-fast);
+}
+
+.gallery-card:hover { border-color: var(--border-strong); }
+
+.gallery-card-label {
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-ui);
+}
+
+.gallery-card-img-wrap {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 150px;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #090c0f;
+}
+
+.gallery-card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    cursor: pointer;
+    transition: opacity 0.3s var(--ease);
+}
+
+.gallery-card-img-wrap img:hover { opacity: 0.85; }
+
+.gallery-card-img-wrap.image-error img { display: none; }
+.gallery-card-img-wrap.image-error::after {
+    content: attr(data-error-label);
+    padding: 12px;
+    color: var(--text-muted);
+    font: 700 10px var(--font-ui);
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.gallery-card-img-wrap img.gallery-img-fade-out {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    pointer-events: none;
+    animation: galleryOut 0.3s var(--ease) forwards;
+}
+
+.gallery-card-img-wrap img.gallery-img-fade-in {
+    animation: galleryIn 0.3s var(--ease);
+}
+
+@keyframes galleryOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes galleryIn  { from { opacity: 0; } to { opacity: 1; } }
+
+.gallery-defects {
+    padding: 10px 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    font-family: var(--font-ui);
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.gallery-defects-label { color: var(--text-dim); font-weight: 600; }
+.gallery-defects-items {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--bad);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gallery-loading {
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 40px;
+    text-align: center;
+    grid-column: 1 / -1;
+}
+
+.gallery-fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    animation: galleryModalIn 0.15s var(--ease);
+}
+
+.gallery-fullscreen img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+}
+
+@keyframes galleryModalIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ─── Overlay peek ────────────────────────────────────────────────── */
+
+.camera-overlay.overlay-peek {
+    opacity: 0.08;
+    transition: opacity var(--t-slow) var(--ease);
+}
+
+.camera-overlay:not(.overlay-peek) {
+    transition: opacity var(--t-slow) var(--ease);
+}
+
+/* ─── State-specific overlay colors ───────────────────────────────── */
+
+.camera-overlay[data-main-text="STARTING"] .camera-overlay-main {
+    color: var(--accent);
+}
+
+.camera-overlay[data-main-text="DRAINING"] .camera-overlay-main {
+    color: var(--warn);
+}
+
+.camera-overlay[data-main-text="FAULT"] .camera-overlay-main {
+    color: var(--bad);
+}
+

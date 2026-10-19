@@ -1,0 +1,103 @@
+/* axis.css — Line Monitor UI module */
+
+/* ─── Axis panel ──────────────────────────────────────────────────── */
+
+.axis-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-family: var(--font-mono);
+}
+
+.axis-row span:not(.axis-name):not(.axis-state) {
+    color: var(--text-dim);
+}
+
+.axis-row span span {
+    color: var(--text);
+    font-weight: 500;
+}
+
+.axis-row > span:last-child {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 10px;
+}
+
+.axis-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 9px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.axis-state {
+    flex: 0 1 92px;
+    min-width: 0;
+    max-width: 96px;
+    padding: 2px 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-dim);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 8px;
+    font-weight: 650;
+    letter-spacing: 0.45px;
+    text-transform: uppercase;
+    text-align: center;
+    transition: color var(--t-normal), background-color var(--t-normal);
+}
+
+.axis-state.axis-moving,
+.axis-state.axis-opening,
+.axis-state.axis-closing,
+.axis-state.axis-waiting,
+.axis-state.axis-homing {
+    color: var(--warn);
+    background: var(--warn-bg);
+}
+
+.axis-state.axis-open {
+    color: var(--accent);
+    background: var(--accent-glow);
+}
+
+.axis-state.axis-ready,
+.axis-state.axis-idle {
+    color: var(--text-dim);
+    background: var(--bg-2);
+}
+
+.axis-state.axis-fault {
+    color: var(--bad);
+    background: var(--bad-bg);
+    border-color: var(--bad);
+}
+
+.axis-action {
+    margin-top: 2px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+    overflow: hidden;
+    color: var(--text-muted);
+    font: 600 8px var(--font-mono);
+    letter-spacing: 0.35px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.axis-action span {
+    color: var(--text-dim);
+}
+

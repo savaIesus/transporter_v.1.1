@@ -1,0 +1,341 @@
+/* process.css — Line Monitor UI module */
+/* ─── Process line under main camera ───────────────────────────── */
+.process-line-panel {
+    flex: 0 0 auto;
+    background: var(--panel-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 8px 14px 9px;
+    min-height: 78px;
+}
+.process-line-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.process-line-title,
+.distributor-title {
+    color: var(--text-dim);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+}
+.production-line-wrapper {
+    position: relative;
+    margin-top: 6px;
+}
+.line-conveyor-track {
+    display: block;
+    width: 100%;
+    overflow: visible;
+    position: relative;
+    padding: 3px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+.production-line-cells {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-width: 0;
+    height: 32px;
+    display: grid;
+    /* Пять позиций ленты (+0 … +4): +0 инспекция LEFT/MIDDLE/RIGHT,
+       +3 сортировка, +4 зона сброса после распределителя. */
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 3px;
+    overflow: hidden;
+}
+.production-line-cells .line-cell {
+    min-height: 32px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    font: 700 11px var(--font-mono);
+    border: 1px solid var(--border-strong);
+    background: rgba(7, 11, 15, .72);
+    border-radius: 2px;
+    position: relative;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.018);
+}
+.line-position-labels {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    min-width: 0;
+    gap: 3px;
+    /* Labels aligned with the five cells. */
+    margin: 3px 0 0;
+}
+.line-position-labels span {
+    overflow: hidden;
+    color: var(--text-muted);
+    font: 600 8px var(--font-ui);
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.line-position-labels .stage-position {
+    color: var(--text-dim);
+    font-weight: 700;
+}
+
+/* ─── Persistent distributor panel in right column ──────────────
+   Вся панель — единый блок-индикатор маршрута детали: она целиком
+   заливается полупрозрачным цветом того канала, куда сейчас уходит
+   деталь (годное/брак/зачистка). Карточки DIST1/DIST2 внутри остаются
+   тёмными и читаемыми. */
+.distributor-panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 7px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition:
+        background-color var(--t-slow) var(--ease),
+        border-color var(--t-slow) var(--ease);
+}
+
+/* Маршрут распределителя: заливка панели показывает текущий маршрут
+   детали на +3 (или положение заслонок, если детали нет). При переходе
+   в route-good/bad/cleanup цвет панели сменяется автоматически. */
+.distributor-panel.route-good { background: var(--ok-fill); border-color: var(--ok); }
+.distributor-panel.route-bad { background: var(--bad-fill); border-color: var(--bad); }
+.distributor-panel.route-cleanup { background: var(--warn-fill); border-color: var(--warn); }
+.distributor-head { display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; position: relative; }
+.distributor-panel.route-good .distributor-title { color: var(--ok); }
+.distributor-panel.route-bad .distributor-title { color: var(--bad); }
+.distributor-panel.route-cleanup .distributor-title { color: var(--warn); }
+.blade-card {
+    display: flex;
+    flex-direction: column;
+    /* Полупрозрачная тёмная подложка: заливка панели просвечивает
+       сквозь карточку, а ползунок остаётся контрастным. Высота
+       определяется содержимым, поэтому карточки одинаковы и на
+       остановке, и во время работы. */
+    background: rgba(15, 19, 23, 0.62);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px;
+}
+.blade-track {
+    position: relative;
+    align-self: stretch;
+    flex: 0 0 8px;
+    height: 8px;
+    margin: 6px;
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+}
+
+/* Подписи концов ползунка: левый край — первое положение, правый —
+   второе. Строка всегда видна (и на остановке, и во время работы),
+   поэтому блок распределителя выглядит одинаково в любом состоянии. */
+.blade-track-labels {
+    display: flex;
+    flex: 0 0 10px;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 7px 2px;
+    padding: 0;
+    color: var(--text-dim);
+    font: 700 8px var(--font-ui);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.blade-marker {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 12px;
+    height: 14px;
+    border-radius: 2px;
+    transform: translate(-50%, -50%);
+    will-change: left;
+    transition: left 100ms lileft;
+    box-shadow: none;
+    /* Оба ползунка одного цвета: маршрут детали показывает заливка всей
+       панели, а не раскраска маркеров. */
+    color: var(--accent);
+    background: var(--accent);
+}
+.diagnostic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+.blade-diagnostic-grid {
+    margin-top: 2px;
+}
+/* Кнопки диагностики распределителя наследуют единый стиль
+   .btn .btn-sm (см. controls.css), включая .pending. */
+
+.jog-panel.jog-panel-embedded {
+    grid-column: auto;
+    grid-row: auto;
+    /* Отдельный блок-карточка, как панель распределителя и пороги
+       правил: собственная подложка, рамка и скругление.
+       Опущен ниже — прижат к низу колонки, пустое пространство
+       заполняет блок порогов. */
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 7px 8px 8px;
+    min-height: 0;
+    overflow: visible;
+    gap: 6px;
+    box-shadow: none;
+    margin-top: auto;
+}
+.jog-panel-embedded .jog-header {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+/* Внутренняя рамка вокруг кнопок ручного хода: кнопки собраны в
+   отдельный блок внутри карточки (как blade-card у распределителя). */
+.jog-panel-embedded .jog-dpad {
+    padding: 5px 6px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+.jog-panel-embedded .jog-hold-btn {
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+}
+.jog-panel-embedded .jog-hold-arrow {
+    width: 24px;
+    height: 24px;
+}
+
+.control-error {
+    margin: 4px 0;
+    padding: 5px 8px;
+    color: var(--bad);
+    background: var(--bad-bg);
+    border: 1px solid var(--bad);
+    border-radius: var(--radius-sm);
+    font: 700 10px var(--font-ui);
+}
+
+.jog-panel.jog-inactive { opacity: 0.55; }
+
+/* Во время короткой передачи управления после нажатия ПАУЗА кнопки уже
+   выглядят как готовые. Они остаются disabled до подтверждения backend,
+   но не меняют прозрачность в кадре поднимающейся шторки. */
+.jog-panel.jog-pause-handoff,
+.jog-panel.jog-pause-handoff .jog-dpad-btn:disabled {
+    opacity: 1;
+}
+
+/* Кнопка «ЗАКРЫТЬ» на экране ошибки загрузки — .btn.btn-bad;
+   здесь только отступ от текста ошибки. */
+.splash-exit-btn {
+    margin-top: 12px;
+}
+
+/* Right-column containment: колонка не прокручивается целиком.
+   Переменная по высоте зона — только «Пороги правил» со своим ползунком. */
+.stats-panel {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 10px;
+    align-content: flex-start;
+}
+.frame-analysis-panel-new,
+.stats-summary,
+.distributor-panel,
+.thresholds-panel,
+.jog-panel.jog-panel-embedded {
+    flex: 0 0 auto;
+    position: relative;
+}
+.jog-panel.jog-panel-embedded {
+    overflow: hidden;
+    z-index: 0;
+}
+.jog-panel-embedded .jog-dpad,
+.jog-panel-embedded .jog-hold-btn {
+    position: relative;
+    z-index: 1;
+}
+.jog-panel-embedded .jog-hold-arrow {
+    position: relative;
+    z-index: 2;
+}
+
+/* ─── Заголовки панелей: равное расстояние от верха/низа ───────────
+   Все надписи блоков выровнены по центру вертикали (flex center)
+   с одинаковым min-height, чтобы визуально стояли на одном уровне. */
+.process-line-head,
+.distributor-head,
+.thresholds-head,
+.jog-header,
+.fa-new-head,
+.history {
+    min-height: 16px;
+}
+.process-line-title,
+.distributor-title,
+.history-title,
+.process-phase-title,
+.thresholds-title,
+.jog-title {
+    display: flex;
+    align-items: center;
+    min-height: 14px;
+}
+
+/* ─── Carriage stencil: final process-line model ──────────────────────
+   This is a single carriage wall, not five status cards.  The only labels
+   are below the apertures; the apertures themselves never get a route state. */
+.process-line-head { justify-content: center; }
+.line-position-labels { margin-top: 4px; }
+/* One .line-token-piece per aperture.  A piece is a clipped view of one
+   continuous body behind the wall, not a second framed cell. */
+.line-token-piece {
+    position: absolute;
+    z-index: 1;
+    top: 5px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 0;
+    border-radius: 2px;
+    background: #66737e;
+    color: rgba(8, 13, 17, .86);
+    font: 800 9px var(--font-ui);
+    line-height: 1;
+    box-shadow: inset 0 1px rgba(255,255,255,.13), 0 1px 2px rgba(0,0,0,.35);
+    transition: left var(--move-duration, 630ms) cubic-bezier(.25,.1,.25,1),
+                transform var(--appear-duration, 560ms) var(--ease),
+                opacity var(--appear-duration, 560ms) ease;
+    will-change: left, transform, opacity;
+    pointer-events: none;
+}
+.line-token-piece.cell-good { background: var(--ok); }
+.line-token-piece.cell-bad { background: var(--bad); }
+.line-token-piece.cell-cleanup { background: var(--warn); }
+.line-token-piece.token-entering { transform: translateY(-44px); }
+.line-token-piece.token-exiting {
+    transform: translateY(54px);
+    opacity: 0;
+    transition: left var(--move-duration, 630ms) cubic-bezier(.25,.1,.25,1),
+                transform var(--drop-duration, 720ms) var(--ease),
+                opacity var(--drop-duration, 720ms) ease;
+}
+/* A conflicting aperture must be visually empty, including its border fill. */
+.line-token-piece.is-hidden-by-conflict { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+    .line-token-piece { transition-duration: 1ms !important; }
+}

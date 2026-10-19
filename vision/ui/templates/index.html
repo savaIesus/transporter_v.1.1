@@ -1,0 +1,379 @@
+<!-- vision/ui/templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Роботехнический комплекс конвейерного типа 3</title>
+    <link rel="stylesheet" href="/static/css/base.css?v=37">
+    <link rel="stylesheet" href="/static/css/blocks.css?v=29">
+    <link rel="stylesheet" href="/static/css/camera.css?v=41">
+    <link rel="stylesheet" href="/static/css/axis.css?v=33">
+    <link rel="stylesheet" href="/static/css/history-strip.css?v=47">
+    <link rel="stylesheet" href="/static/css/stats.css?v=50">
+    <link rel="stylesheet" href="/static/css/jog.css?v=36">
+    <link rel="stylesheet" href="/static/css/controls.css?v=38">
+    <link rel="stylesheet" href="/static/css/gallery.css?v=34">
+    <link rel="stylesheet" href="/static/css/process.css?v=57">
+    <link rel="stylesheet" href="/static/css/motion.css?v=39">
+    <link rel="stylesheet" href="/static/css/thresholds.css?v=24">
+    <link rel="stylesheet" href="/static/css/archive.css?v=6">
+    <link rel="stylesheet" href="/static/css/panel-deck.css?v=7">
+</head>
+<body>
+
+    <!-- SPLASH -->
+    <div id="splash" class="splash" data-ui-block="splash">
+        <div class="splash-inner">
+            <h1 class="splash-title">РОБОТЕХНИЧЕСКИЙ КОМПЛЕКС КОНВЕЙЕРНОГО ТИПА 3</h1>
+            <div class="splash-status">
+                <span id="splash-message">Инициализация</span><span class="dots"></span>
+            </div>
+            <div class="splash-progress-bar">
+                <div id="splash-progress-fill" class="splash-progress-fill"></div>
+            </div>
+            <div id="splash-error" class="splash-error is-hidden">
+                <div class="splash-error-title">ОШИБКА</div>
+                <div id="splash-error-message" class="splash-error-message"></div>
+                <button id="splash-exit" class="btn btn-bad splash-exit-btn">ЗАКРЫТЬ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN UI -->
+    <div id="main" class="main is-hidden">
+
+        <main class="body">
+            <section class="left-column">
+                <div id="preview-strip" class="preview-strip" data-ui-block="preview-strip"></div>
+                <div class="camera-container" data-ui-block="main-camera">
+                    <div class="camera-label" id="camera-label">—</div>
+                    <div class="mode-badge is-faded" id="mode-badge" aria-live="polite"></div>
+                    <img id="main-camera" class="main-camera" alt="Камера">
+                    <div class="camera-live-controls" data-ui-block="camera-controls">
+                        <button id="view-mode-toggle" class="btn btn-overlay btn-accent is-faded" disabled
+                                aria-label="Переключить вид: правила или модели">ПРАВИЛА</button>
+                        <button id="analyze-selected-frame" class="btn btn-overlay btn-accent" disabled>АНАЛИЗ КАДРА</button>
+                    </div>
+                    <div id="camera-overlay" class="camera-overlay is-hidden"></div>
+                </div>
+                <section class="process-line-panel" data-ui-block="process-line">
+                    <div class="process-line-head">
+                        <span class="process-line-title">ПУТЬ КОРПУСОВ</span>
+                    </div>
+                    <div class="line-cells-wrapper production-line-wrapper">
+                        <div class="line-conveyor-track">
+                            <div id="line-cells" class="line-cells production-line-cells">
+                                <div class="line-cell" data-pos="0" data-cell-no="+0"></div>
+                                <div class="line-cell" data-pos="1" data-cell-no="+1"></div>
+                                <div class="line-cell" data-pos="2" data-cell-no="+2"></div>
+                                <div class="line-cell" data-pos="3" data-cell-no="+3"></div>
+                                <div class="line-cell" data-pos="4" data-cell-no="+4"></div>
+                            </div>
+                        </div>
+                    <div class="line-position-labels" aria-label="Позиции линии">
+                        <span class="stage-position">+0 · ИНСПЕКЦИЯ</span>
+                        <span>+1</span>
+                        <span>+2</span>
+                        <span class="stage-position">+3 · СОРТИРОВКА</span>
+                        <span class="stage-position">+4 · СБРОС</span>
+                    </div>
+                    </div>
+                </section>
+                <div class="bottom-strip-row">
+                    <div class="history" data-ui-block="history-strip">
+                        <div class="history-title">ПОСЛЕДНИЕ КОРПУСА</div>
+                        <div id="history-cards" class="history-cards">
+                            <div class="history-card history-card-placeholder" aria-hidden="true">
+                                <div class="history-card-id">&nbsp;</div>
+                                <div class="history-card-symbol">—</div>
+                            </div>
+                            <div class="history-card history-card-placeholder" aria-hidden="true">
+                                <div class="history-card-id">&nbsp;</div>
+                                <div class="history-card-symbol">—</div>
+                            </div>
+                            <div class="history-card history-card-placeholder" aria-hidden="true">
+                                <div class="history-card-id">&nbsp;</div>
+                                <div class="history-card-symbol">—</div>
+                            </div>
+                            <div class="history-card history-card-placeholder" aria-hidden="true">
+                                <div class="history-card-id">&nbsp;</div>
+                                <div class="history-card-symbol">—</div>
+                            </div>
+                            <div class="history-card history-card-placeholder" aria-hidden="true">
+                                <div class="history-card-id">&nbsp;</div>
+                                <div class="history-card-symbol">—</div>
+                            </div>
+                            <div class="history-card history-card-placeholder" aria-hidden="true">
+                                <div class="history-card-id">&nbsp;</div>
+                                <div class="history-card-symbol">—</div>
+                            </div>
+                            <div class="history-card history-card-placeholder" aria-hidden="true">
+                                <div class="history-card-id">&nbsp;</div>
+                                <div class="history-card-symbol">—</div>
+                            </div>
+                            <div class="history-card history-card-placeholder" aria-hidden="true">
+                                <div class="history-card-id">&nbsp;</div>
+                                <div class="history-card-symbol">—</div>
+                            </div>
+                            <div class="history-card history-card-placeholder" aria-hidden="true">
+                                <div class="history-card-id">&nbsp;</div>
+                                <div class="history-card-symbol">—</div>
+                            </div>
+                            <div class="history-card history-card-placeholder" aria-hidden="true">
+                                <div class="history-card-id">&nbsp;</div>
+                                <div class="history-card-symbol">—</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="process-phase-panel" data-ui-block="process-phase">
+                        <div class="process-phase-head">
+                            <div class="process-phase-title">ЭТАПЫ ЦИКЛА</div>
+                            <span id="process-phase-step" class="process-phase-step">ШАГ 0</span>
+                        </div>
+                        <div class="process-phase-row">
+                            <div id="process-phase-label" class="process-phase-label" data-line-state="IDLE" aria-live="polite">ГОТОВА К ПУСКУ</div>
+                        </div>
+                        <div id="process-stage-track" class="process-stage-track" aria-label="Последовательность производственного шага">
+                            <span data-process-stage="START" title="Первый цикл: корпус уже может находиться под камерами">СТАРТ</span>
+                            <span data-process-stage="MOTION" title="Движение ленты">ХОД</span>
+                            <span data-process-stage="SETTLE" title="Затухание вибрации">СТОП</span>
+                            <span data-process-stage="CAPTURE" title="Захват стоп-кадра">КАДР</span>
+                            <span data-process-stage="ANALYSIS" title="Модели, геометрия и решение">АНАЛИЗ</span>
+                            <span data-process-stage="REVIEW" title="Просмотр результата">РЕВЬЮ</span>
+                            <span data-process-stage="PUBLISH" title="Публикация и завершение шага">ИТОГ</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <aside id="stats-panel" class="stats-panel" data-face="ready" data-ui-block="right-panel">
+                <div id="control-error" class="control-error is-hidden"></div>
+
+                <!-- Лицо «АВАРИЯ»: заменяет обычные блоки, когда цикл в FAULT. -->
+                <section id="fault-face" class="fault-face" data-ui-block="fault" aria-label="Авария">
+                    <div class="fault-face-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 3 L21.5 19.5 H2.5 Z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13.5"></line>
+                            <circle cx="12" cy="16.6" r="0.9"></circle>
+                        </svg>
+                    </div>
+                    <div class="fault-face-title">АВАРИЯ</div>
+                    <div id="fault-reason" class="fault-face-reason">—</div>
+                    <div class="fault-face-inline">На линии корпусов: <span id="fault-inline">0</span> / 4</div>
+                    <div class="fault-face-hint">Устраните причину и перезапустите линию</div>
+                </section>
+
+                <section id="stats-summary" class="stats-summary ui-collapse" data-ui-block="cycle-stats">
+                    <div class="accordion-header" aria-label="Статистика рабочего цикла">
+                        <span>СТАТИСТИКА РАБОЧЕГО ЦИКЛА</span>
+                    </div>
+                    <div id="stats-body" class="stats-body ui-collapse is-collapsed">
+                        <div class="stats-row stats-half"><span class="stats-label">Всего корпусов</span><span id="stat-total" class="stats-value">0</span></div>
+                        <div class="stats-row stats-half"><span class="stats-label">На линии</span><span id="stat-inline" class="stats-value">0 / 4</span></div>
+                        <div class="stats-row stats-third"><span class="stats-label">Годные</span><span id="stat-good" class="stats-value good">0</span></div>
+                        <div class="stats-row stats-third"><span class="stats-label">Брак</span><span id="stat-bad" class="stats-value bad">0</span></div>
+                        <div class="stats-row stats-third"><span class="stats-label">На зачистку</span><span id="stat-cleanup" class="stats-value warn">0</span></div>
+                        <div class="stats-row stats-half"><span class="stats-label">Шаг</span><span id="metric-step" class="stats-value">0</span></div>
+                        <div class="stats-row stats-half"><span class="stats-label">Время работы</span><span id="metric-uptime" class="stats-value">00:00:00</span></div>
+                    </div>
+                </section>
+
+                <section id="distributor-diagnostics" class="distributor-panel ui-collapse" data-ui-block="distributor">
+                    <div class="distributor-head">
+                        <span class="distributor-title">РАСПРЕДЕЛИТЕЛЬ</span>
+                    </div>
+                    <div class="blade-card">
+                        <div class="blade-track">
+                            <div id="dist1-blade" class="blade-marker"></div>
+                        </div>
+                        <div class="blade-track-labels" aria-hidden="true">
+                            <span>ГОДНО</span>
+                            <span>БРАК</span>
+                        </div>
+                        <div class="diagnostic-grid blade-diagnostic-grid ui-collapse">
+                            <button class="btn btn-sm" data-distributor-command="DIST1_HOME" disabled>ГОДНО</button>
+                            <button class="btn btn-sm" data-distributor-command="DIST1_OPEN" disabled>БРАК</button>
+                        </div>
+                    </div>
+                    <div class="blade-card">
+                        <div class="blade-track">
+                            <div id="dist2-blade" class="blade-marker"></div>
+                        </div>
+                        <div class="blade-track-labels" aria-hidden="true">
+                            <span>БРАК</span>
+                            <span>ЗАЧИСТКА</span>
+                        </div>
+                        <div class="diagnostic-grid blade-diagnostic-grid ui-collapse">
+                            <button class="btn btn-sm" data-distributor-command="DIST2_BAD" disabled>БРАК</button>
+                            <button class="btn btn-sm" data-distributor-command="DIST2_CLEANUP" disabled>ЗАЧИСТКА</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Пороги правил выбранной (главной) камеры: над кнопками
+                     ручного управления лентой. Высота блока фиксирована —
+                     правая колонка HMI не прокручивается. Каждое правило —
+                     отдельная карточка; значения задаются числовыми полями.
+                     Одновременно видна одна карточка; переключение —
+                     вкладками-заголовками. У каждой карточки свой
+                     вертикальный ползунок (дорожка + бегунок): виден только
+                     при переполнении строк и показывает положение в списке.
+                     Редактирование — только до пуска
+                     и после полной остановки. -->
+                <section id="thresholds-panel" class="thresholds-panel is-hidden"
+                         data-ui-block="thresholds" aria-label="Пороги правил">
+                    <div class="thresholds-head">
+                        <span class="thresholds-title">ПОРОГИ ПРАВИЛ</span>
+                    </div>
+                    <div id="thresholds-body" class="thresholds-body"></div>
+                    <div class="thresholds-actions">
+                        <span id="thresholds-status" class="thresholds-status"></span>
+                        <button id="thresholds-save" class="btn btn-sm btn-thresholds-save" disabled>СОХРАНИТЬ</button>
+                        <button id="thresholds-reset" class="btn btn-sm" disabled>ОТМЕНИТЬ</button>
+                    </div>
+                </section>
+
+                <section id="frame-analysis-panel" class="frame-analysis-panel-new ui-collapse is-collapsed" data-ui-block="frame-analysis">
+                    <div class="fa-new-head">
+                        <span id="fa-new-verdict" class="fa-new-verdict">—</span>
+                        <span id="fa-new-context" class="fa-new-context"></span>
+                    </div>
+                    <div id="fa-new-body" class="fa-new-body">
+                        <div id="fa-new-scroll" class="fa-new-scroll">
+                            <div id="fa-new-tbody" class="fa-new-tbody"></div>
+                        </div>
+                        <div id="fa-new-scroll-track" class="fa-new-scroll-track is-idle" role="scrollbar" aria-label="Прокрутка анализа кадра" aria-controls="fa-new-scroll" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-disabled="true" title="Прокрутка анализа кадра" tabindex="0">
+                            <div id="fa-new-scroll-thumb" class="fa-new-scroll-thumb"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="jog-deck">
+                    <section id="jog-panel" class="jog-panel jog-panel-embedded ui-collapse" data-ui-block="jog">
+                        <div class="jog-header">
+                            <h2 class="jog-title">РУЧНОЕ УПРАВЛЕНИЕ ЛЕНТОЙ</h2>
+                        </div>
+                        <div class="jog-dpad jog-dpad-hold">
+                            <button class="jog-dpad-btn jog-hold-btn" data-direction="-" disabled
+                                    aria-label="Двигать ленту назад" title="Удерживайте для движения назад">
+                                <svg class="jog-hold-arrow" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M15 5 L8 12 L15 19"></path>
+                                </svg>
+                            </button>
+                            <button class="jog-dpad-btn jog-hold-btn" data-direction="+" disabled
+                                    aria-label="Двигать ленту вперёд" title="Удерживайте для движения вперёд">
+                                <svg class="jog-hold-arrow" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M9 5 L16 12 L9 19"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </section>
+                    <!-- Шторка с замком: накрывает ручное управление во время
+                         работы линии и поднимается после полной остановки. -->
+                    <div class="jog-shutter" aria-hidden="true">
+                        <div class="jog-shutter-body">
+                            <svg class="jog-shutter-lock" viewBox="0 0 24 24">
+                                <rect x="5" y="10.5" width="14" height="9.5" rx="2"></rect>
+                                <path d="M8 10.5 V7.5 a4 4 0 0 1 8 0 v3"></path>
+                            </svg>
+                            <div class="jog-shutter-caption">ЗАБЛОКИРОВАНО</div>
+                            <div class="jog-shutter-sub">ДОСТУПНО ПОСЛЕ ОСТАНОВКИ</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            
+        </main>
+
+        <footer class="footer" data-ui-block="controls-footer">
+            <div class="buttons">
+                <button id="btn-start" class="btn btn-start" disabled>ПУСК</button>
+                <button id="btn-pause" class="btn btn-pause is-hidden" disabled>ПАУЗА</button>
+                <button id="btn-resume" class="btn btn-resume is-hidden" disabled>ПРОДОЛЖИТЬ</button>
+                <button id="btn-stop"  class="btn btn-stop is-hidden" disabled>СТОП</button>
+                <button id="btn-exit"  class="btn btn-exit" disabled>ВЫХОД</button>
+            </div>
+            <div class="footer-archive" id="archive-settings-group" data-ui-block="footer-archive">
+                <span class="footer-archive-label">АРХИВ ПАРТИЙ</span>
+                <button id="archive-settings-open" class="btn btn-archive-settings" disabled>АРХИВ</button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ARCHIVE SETTINGS MODAL -->
+    <div id="archive-settings-modal" class="archive-settings-modal is-hidden" data-ui-block="archive-settings">
+        <div class="archive-settings-backdrop"></div>
+        <section class="archive-settings-dialog" role="dialog" aria-modal="true" aria-labelledby="archive-settings-title">
+            <div class="archive-settings-head">
+                <h2 id="archive-settings-title">АРХИВ ПАРТИЙ</h2>
+                <button id="archive-settings-close" class="btn btn-icon archive-settings-close" type="button" aria-label="Закрыть">&times;</button>
+            </div>
+            <div class="archive-settings-body">
+                <div class="archive-settings-row archive-settings-path-row">
+                    <label for="archive-root-path">ПАПКА ХРАНЕНИЯ</label>
+                    <div class="archive-settings-path-controls">
+                        <input id="archive-root-path" type="text" autocomplete="off" spellcheck="false" placeholder="D:\\InspectionArchive">
+                        <button id="archive-pick-folder" class="btn btn-sm" type="button">ВЫБРАТЬ</button>
+                    </div>
+                </div>
+                <div id="archive-settings-validation" class="archive-settings-validation"></div>
+                <div class="archive-settings-batch">
+                    <span>ТЕКУЩАЯ ПАРТИЯ: <b id="archive-batch-id">—</b></span>
+                    <span>ГОДНОЕ <b id="archive-batch-good">0</b></span>
+                    <span>БРАК <b id="archive-batch-bad">0</b></span>
+                    <span>ЗАЧИСТКА <b id="archive-batch-cleanup">0</b></span>
+                </div>
+            </div>
+            <div class="archive-settings-actions">
+                <span id="archive-settings-status" class="archive-settings-status"></span>
+                <button id="archive-settings-save" class="btn btn-sm btn-archive-save" type="button">СОХРАНИТЬ</button>
+                <button id="archive-settings-cancel" class="btn btn-sm" type="button">ОТМЕНА</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- GALLERY MODAL -->
+    <div id="gallery-modal" class="gallery-modal is-hidden" data-ui-block="gallery">
+        <div class="gallery-backdrop"></div>
+        <div class="gallery-content">
+            <div class="gallery-header">
+                <h2 class="gallery-title">Корпус &#8470;&nbsp;<span id="gallery-part-id">0</span></h2>
+                <div class="gallery-meta">
+                    <span id="gallery-category">КАТЕГОРИЯ: —</span>
+                    <span id="gallery-decision">РЕШЕНИЕ: —</span>
+                    <span id="gallery-time">ВРЕМЯ: —</span>
+                    <span id="gallery-batch">ПАРТИЯ: —</span>
+                </div>
+                <button id="gallery-close" class="btn btn-icon btn-icon-lg gallery-close-btn"
+                        type="button" aria-label="Закрыть">&times;</button>
+            </div>
+            <div class="gallery-mode-toggle">
+                <button id="gallery-mode-debug" class="btn btn-sm gallery-mode-btn active">ПРАВИЛА</button>
+                <button id="gallery-mode-raw" class="btn btn-sm gallery-mode-btn">МОДЕЛИ</button>
+            </div>
+            <div id="gallery-grid" class="gallery-grid"><div class="gallery-loading">Загрузка...</div></div>
+            <div class="gallery-defects">
+                <span class="gallery-defects-label">Дефекты:</span>
+                <span id="gallery-defects-list" class="gallery-defects-items">—</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/core.js?v=61"></script>
+    <script src="/static/js/boot.js?v=33"></script>
+    <script src="/static/js/diagnostics.js?v=51"></script>
+    <script src="/static/js/status.js?v=62"></script>
+    <script src="/static/js/controls.js?v=35"></script>
+    <script src="/static/js/thresholds.js?v=20"></script>
+    <script src="/static/js/cameras.js?v=42"></script>
+    <script src="/static/js/frame-analysis.js?v=15"></script>
+    <script src="/static/js/jog.js?v=36"></script>
+    <script src="/static/js/history.js?v=37"></script>
+    <script src="/static/js/archive.js?v=2"></script>
+    <script src="/static/js/panel-deck.js?v=3"></script>
+    <script src="/static/js/bootstrap.js?v=35"></script>
+</body>
+</html>

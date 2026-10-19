@@ -1,0 +1,14 @@
+{
+  "jog_hold_steps": 1000000,
+  "normal_steps": 18815,
+  "conveyor_speed": 46000,
+  "conveyor_accel": 46000,
+  "dist1_open_position": 360,
+  "dist2_bad_position": 0,
+  "dist2_cleanup_position": 360,
+  "settle_time": 0.2,
+  "stage_trace_time": 0.1,
+  "axis_speed": 1000,
+  "axis_accel": 500,
+  "review_time": 0.1
+}

@@ -1,0 +1,293 @@
+/* camera.css — Line Monitor UI module */
+
+/* ─── Preview strip ───────────────────────────────────────────────── */
+
+.preview-strip {
+    display: flex;
+    gap: 6px;
+    height: 60px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    overflow: hidden;
+}
+
+.preview-cam {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: border-color var(--t-normal) var(--ease);
+}
+
+.preview-cam::after {
+    content: none;
+}
+
+.preview-cam:hover {
+    border-color: var(--border-strong);
+}
+
+.preview-cam.active,
+.preview-cam.active:hover {
+    border-color: var(--accent);
+    box-shadow: inset 0 -3px 0 var(--accent);
+}
+
+.preview-cam img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    transition: opacity var(--t-fast);
+}
+
+.preview-cam.preview-ready img {
+    opacity: 1;
+}
+
+.preview-cam-state {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 5px;
+    background: #090c0f;
+    color: var(--text-muted);
+    font: 700 7px var(--font-ui);
+    letter-spacing: 0.35px;
+    text-align: center;
+    text-transform: uppercase;
+    z-index: 0;
+}
+
+.preview-cam.preview-loading .preview-cam-state {
+    color: var(--accent);
+}
+
+.preview-cam.preview-error .preview-cam-state {
+    color: var(--bad);
+}
+
+.preview-cam.preview-ready .preview-cam-state {
+    display: none;
+}
+
+.preview-cam-label {
+    position: absolute;
+    bottom: 4px;
+    left: 5px;
+    right: 5px;
+    padding: 1px 3px;
+    background: rgba(15, 19, 23, 0.86);
+    border-radius: 2px;
+    font-size: 8px;
+    font-weight: 650;
+    color: var(--text);
+    letter-spacing: 0.25px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-transform: uppercase;
+    z-index: 1;
+}
+
+/* ─── Main camera ─────────────────────────────────────────────────── */
+
+.camera-container {
+    flex: 1 1 auto;
+    min-height: 240px;
+    position: relative;
+    background: #090c0f;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.main-camera {
+    width: 100%;
+    height: 100%;
+    /* Показываем полный кадр с камеры без обрезки.
+       Оригинальный размер/пропорции сохраняются целиком,
+       при несовпадении пропорций контейнера появляются
+       letterbox-полосы вместо обрезки краёв. */
+    object-fit: contain;
+    object-position: center center;
+    display: block;
+    transition: opacity 0.05s;
+    background: #090c0f;
+}
+
+.main-camera:not([src]) {
+    visibility: hidden;
+}
+
+.camera-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    max-width: min(52%, calc(100% - 190px));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: rgba(15, 19, 23, 0.94);
+    color: var(--text);
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    z-index: 10;
+}
+
+.mode-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    max-width: min(45%, calc(100% - 190px));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: rgba(15, 19, 23, 0.94);
+    color: var(--ok);
+    padding: 5px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    border: 1px solid var(--ok);
+    border-radius: var(--radius-sm);
+    z-index: 10;
+    cursor: default;
+    pointer-events: none;
+    transition:
+        color var(--t-normal) var(--ease),
+        border-color var(--t-normal) var(--ease),
+        background-color var(--t-normal) var(--ease);
+}
+
+.mode-badge.mode-live {
+    color: var(--ok);
+    border-color: var(--ok);
+    box-shadow: none;
+    cursor: default;
+}
+
+.mode-badge.mode-analysis {
+    color: var(--warn);
+    border-color: var(--warn);
+    box-shadow: none;
+    cursor: default;
+}
+
+/* Лента стоит: показан статичный кадр, по которому считались правила. */
+.mode-badge.mode-static {
+    color: var(--text-dim);
+    border-color: var(--border-strong);
+    box-shadow: none;
+    cursor: default;
+}
+
+/* ─── State overlay ───────────────────────────────────────────────── */
+
+.camera-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 19, 23, 0.90);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    pointer-events: none;
+    transition: opacity var(--t-slow) var(--ease);
+    opacity: 1;
+}
+
+.camera-overlay.is-hidden {
+    display: flex !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.camera-overlay-main {
+    font-size: 54px;
+    color: var(--warn);
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.camera-overlay-sub {
+    max-width: 80%;
+    text-align: center;
+    overflow-wrap: anywhere;
+    font-size: 16px;
+    color: var(--text-dim);
+    margin-top: 12px;
+    font-family: var(--font-ui);
+}
+
+
+.camera-live-controls {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    z-index: 15;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+}
+/* Кнопки поверх видео наследуют единый стиль .btn (см. controls.css);
+   здесь только возврат перехвата кликов через pointer-events: none
+   контейнера и ограничение ширины длинной подписи. */
+.camera-live-controls button { pointer-events: auto; }
+
+/* Компактная кнопка по размеру совпадает с информационными плашками камеры.
+   Обе подписи имеют одну ширину и остаются строго по центру. */
+#view-mode-toggle {
+    width: 88px;
+    min-width: 88px;
+    height: 27px;
+    padding: 0 9px;
+    justify-content: center;
+    font-size: 10px;
+    letter-spacing: 0.55px;
+    line-height: 1;
+    text-align: center;
+}
+
+#analyze-selected-frame {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* The standard UI window is 1280×720.  On a shorter window the
+   fixed preview/history strips must not consume the camera's entire row and
+   push the process line below the clipped body. */
+@media (max-height: 600px) {
+    .preview-strip { height: 48px; }
+    .camera-container { min-height: 150px; }
+}
+
+@media (max-height: 500px) {
+    .preview-strip { height: 40px; }
+    .camera-container { min-height: 110px; }
+}
+
+
+@media (max-width: 720px) {
+    .camera-label,
+    .mode-badge { max-width: calc(50% - 16px); }
+    .camera-live-controls { justify-content: center; flex-wrap: wrap; }
+}

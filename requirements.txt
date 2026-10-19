@@ -1,0 +1,7 @@
+numpy>=1.26,<2.1
+opencv-python>=4.10,<4.12
+pyserial>=3.5,<4
+ultralytics>=8.3,<9
+fastapi>=0.115,<1
+uvicorn>=0.34,<1
+pywebview>=5.3,<6

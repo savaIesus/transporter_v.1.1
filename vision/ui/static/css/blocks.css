@@ -1,0 +1,319 @@
+/* blocks.css — блок анализа кадра и общие анти-переполнения */
+[data-ui-block] { min-width: 0; min-height: 0; isolation: isolate; }
+[data-ui-block] :where(h1, h2, h3, strong, span, b, small, button) { min-width: 0; }
+[data-ui-block] :where(.title,.state-label,.metrics>span,.preview-cam-label,.camera-label,.mode-badge,.process-line-title,.history-title,.process-phase-title,.history-card-id,.history-card-symbol,.accordion-header span,.stats-label,.distributor-title,.axis-name,.axis-state,.axis-route span,.axis-route b,.axis-action,.jog-title,.fa-new-verdict,.fa-new-rule-name,.gallery-title,.gallery-meta>span,.gallery-card-label,.gallery-defects-items,.calibration-title-block h1,.calibration-title-block span,.calibration-state,.calibration-counter span,.panel-heading h2,.step-counter,.assigned-count,.candidate-position span,.role-name strong,.role-name span,.role-camera,.config-path,.calibration-footer>span) { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+[data-ui-block] :where(.camera-overlay-sub,.control-error,.review-message,.fatal-error,.saved-message,.preview-error,.gallery-defects) { overflow-wrap: anywhere; }
+[data-ui-block="calibration-assignment"] { scrollbar-gutter: stable; }
+[data-ui-block="main-camera"] { contain: layout paint; }
+[data-ui-block="process-line"] { contain: layout paint style; }
+[data-ui-block="controls-footer"] .buttons,[data-ui-block="camera-controls"],[data-ui-block="gallery"] .gallery-header,[data-ui-block="calibration-header"],[data-ui-block="calibration-footer"] { min-width: 0; }
+
+/* === Анализ кадра === */
+
+.frame-analysis-panel-new {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1 1 auto;
+    min-height: 180px;
+    max-height: 420px;
+    overflow: hidden;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0;
+}
+
+/* Шапка: вердикт + контекст, без лишней рамки */
+.fa-new-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex: 0 0 auto;
+    padding: 7px 8px 6px;
+    background: transparent;
+    border-bottom: 1px solid var(--border);
+}
+
+.fa-new-verdict {
+    flex: 0 0 auto;
+    padding: 2px 9px;
+    border-radius: 3px;
+    font: 700 10px var(--font-ui);
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+}
+.fa-new-verdict.ok    { background: var(--ok-bg); color: var(--ok); border-color: rgba(114,163,126,0.25); }
+.fa-new-verdict.bad   { background: var(--bad-bg); color: var(--bad); border-color: rgba(201,118,118,0.25); }
+.fa-new-verdict.warn  { background: var(--warn-bg); color: var(--warn); border-color: rgba(193,166,106,0.25); }
+.fa-new-verdict.empty { color: var(--text-muted); border-color: var(--border); background: var(--bg-1); }
+
+.fa-new-context {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--text-muted);
+    font: 700 7px var(--font-ui);
+    letter-spacing: 0.3px;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Тело с кастомным ползунком — как в порогах правил */
+.fa-new-body {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    padding: 6px 4px 6px 6px;
+    position: relative;
+}
+
+.fa-new-scroll {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+}
+.fa-new-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+.fa-new-tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 0;
+    padding-right: 2px;
+}
+
+/* Заголовок правила — без обводки, только фон и лёгкий акцент слева */
+.fa-new-rule-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 6px;
+    margin-top: 10px;
+    background: var(--bg-1);
+    border-radius: 3px;
+    border-left: 2px solid var(--border);
+}
+.fa-new-rule-head:first-child { margin-top: 0; }
+.fa-new-rule-head.triggered { border-left-color: var(--bad); background: rgba(201,118,118,0.08); }
+
+.fa-new-rule-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--text-dim);
+    font: 700 9px var(--font-ui);
+    letter-spacing: 0.3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.fa-new-rule-head.triggered .fa-new-rule-name { color: var(--text); }
+
+.fa-new-rule-badge {
+    flex: 0 0 auto;
+    padding: 1px 6px;
+    border-radius: 2px;
+    font: 700 7px var(--font-ui);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    border: none;
+}
+.fa-new-rule-badge.bad  { background: var(--bad); color: var(--bg-0); }
+.fa-new-rule-badge.ok   { background: rgba(114,163,126,0.18); color: var(--ok); }
+.fa-new-rule-badge.warn { background: rgba(193,166,106,0.18); color: var(--warn); }
+
+/* Строка замера: без обводок, только лёгкий разделитель между соседями
+   и фон при наведении — строка не кликабельна. */
+.fa-new-thr-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) 64px 68px;
+    gap: 6px;
+    align-items: center;
+    padding: 3px 4px 3px 8px;
+    background: transparent;
+    border-radius: 2px;
+    min-height: 22px;
+    /* никаких бордеров по умолчанию */
+    border: none;
+    transition: background 120ms var(--ease);
+}
+.fa-new-thr-row + .fa-new-thr-row {
+    border-top: 1px solid rgba(48, 59, 68, 0.42);
+}
+.fa-new-thr-row:hover {
+    background: rgba(255,255,255,0.02);
+}
+
+.fa-new-thr-label {
+    min-width: 0;
+    color: var(--text-dim);
+    font: 500 8px var(--font-ui);
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Порог — статичный текст, без рамки */
+.fa-new-thr-limit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 0;
+    color: var(--text-muted);
+    font: 700 8px var(--font-mono);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Замер — статичный, не кликабельный. Цветом показывает статус, без лишних рамок */
+.fa-new-meas {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 0;
+    padding: 2px 6px;
+    border-radius: 2px;
+    background: var(--bg-0);
+    font: 700 8px var(--font-mono);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: default;
+    user-select: text;
+    border: none;
+}
+.fa-new-meas.is-ok   { color: var(--text-dim); background: transparent; }
+.fa-new-meas.is-bad  { color: var(--bad); background: var(--bad-bg); }
+.fa-new-meas:focus { outline: none; }
+.fa-new-meas:focus-visible { outline: none; }
+
+/* Пустое состояние — лёгкий текст, без рамки-бордера */
+.fa-new-empty {
+    padding: 14px 8px;
+    color: var(--text-muted);
+    font: 500 9px var(--font-ui);
+    text-align: center;
+    background: transparent;
+    border: none;
+}
+
+/* Блок объекта: сгруппированные замеры одного объекта — без внешней обводки */
+.fa-new-obj-block {
+    margin: 4px 0 2px 8px;
+    background: rgba(15,19,23,0.42);
+    border-radius: 3px;
+    overflow: hidden;
+    border: none;
+}
+
+.fa-new-obj-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid rgba(48,59,68,0.5);
+}
+
+.fa-new-obj-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--text-dim);
+    font: 700 8px var(--font-ui);
+    letter-spacing: 0.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fa-new-obj-badge {
+    flex: 0 0 auto;
+    padding: 1px 5px;
+    border-radius: 2px;
+    font: 700 7px var(--font-ui);
+    white-space: nowrap;
+    border: none;
+}
+.fa-new-obj-badge.ok    { background: rgba(114,163,126,0.14); color: var(--ok); }
+.fa-new-obj-badge.bad   { background: var(--bad-bg); color: var(--bad); }
+.fa-new-obj-badge.muted { color: var(--text-muted); background: transparent; }
+
+/* Вложенные строки внутри блока объекта — без отступов и без бордеров */
+.fa-new-obj-block .fa-new-thr-row {
+    margin-left: 0;
+    padding-left: 8px;
+    border-radius: 0;
+    background: transparent;
+}
+.fa-new-obj-block .fa-new-thr-row + .fa-new-thr-row {
+    border-top: 1px solid rgba(48, 59, 68, 0.42);
+}
+
+/* Ползунок — как в порогах правил, виден только при переполнении */
+.fa-new-scroll-track {
+    flex: 0 0 10px;
+    width: 10px;
+    min-width: 10px;
+    align-self: stretch;
+    position: relative;
+    margin: 0;
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+.fa-new-scroll-thumb {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 14px;
+    height: 28px;
+    min-height: 22px;
+    border-radius: 3px;
+    background: var(--accent);
+    border: 1px solid var(--border-accent);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.35);
+    transform: translateX(-50%);
+    cursor: grab;
+    will-change: top, height;
+    transition: background 150ms var(--ease), height 120ms var(--ease);
+}
+/* Увеличенная прозрачная зона захвата для пальца, без изменения геометрии бегунка. */
+.fa-new-scroll-thumb::before {
+    content: '';
+    position: absolute;
+    inset: -6px -8px;
+}
+.fa-new-scroll-thumb:active,
+.fa-new-scroll-track.is-dragging .fa-new-scroll-thumb {
+    cursor: grabbing;
+    filter: brightness(1.15);
+}
+.fa-new-scroll-track:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 2px;
+}
+.fa-new-scroll-track.is-idle { display: none; }
+
+/* Микро-анимации отключены для замеров — стабильность важнее */
+@media (prefers-reduced-motion: reduce) {
+    .fa-new-thr-row, .fa-new-meas, .fa-new-scroll-thumb { transition: none; }
+}

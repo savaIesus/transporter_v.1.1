@@ -1,0 +1,355 @@
+/* thresholds.css — панель «Пороги правил» (фиксированная высота).
+   Правая колонка HMI не прокручивается. Ползунок карточки (дорожка +
+   бегунок) виден только при переполнении строк. */
+.thresholds-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    /* Гибкая высота: заполняет пустое пространство правой колонки,
+       оставшееся после distributor и frame-analysis. Jog опущен ниже. */
+    flex: 1 1 auto;
+    min-height: 180px;
+    max-height: 560px;
+    height: auto;
+    overflow: hidden;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 7px;
+}
+.thresholds-head {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+    min-height: 16px;
+    text-align: center;
+}
+.thresholds-title {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    white-space: nowrap;
+}
+.thresholds-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+/* Обёртка блока порогов. Высота панели фиксирована; карточка и
+   строки заполняют оставшееся место, лишнее — через ползунок. */
+.thresholds-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+.thresholds-cards {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.thresholds-empty {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 2px 0;
+}
+/* ─── Вкладки-заголовки правил (как в браузере) ────────────────────
+   Одна вкладка на правило; активная выделяется сдержанно — только
+   чуть заметной обводкой. Все вкладки делят ширину ленты поровну
+   (flex: 1 1 0) и всегда умещаются целиком. Длинные названия
+   обрезаются многоточием; при наведении заголовок «разъезжается»:
+   вкладка плавно раскрывается до полного названия, соседние уступают
+   ширину, но сжатие разрешено — вкладки не уезжают за правый край.
+   Точную ширину названия измеряет thresholds.js (flex-basis);
+   подсказка (title) — запасной вариант. */
+.thresholds-tabs {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    flex: 0 0 auto;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--border);
+}
+.thresholds-tabs::-webkit-scrollbar { display: none; }
+.thresholds-tab {
+    /* Равные доли ленты: сколько бы ни было правил, вкладки не
+       разъезжаются за правый край, а сжимаются и остаются видимыми. */
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 2px; /* tighter gap для компактности */
+    min-height: 22px;
+    padding: 2px 4px 3px; /* tighter padding: меньше пустого пространства */
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background: var(--bg-1);
+    color: var(--text-muted);
+    font: 700 8px var(--font-ui);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    /* flex-basis анимируется: вкладка плавно разъезжается/сжимается. */
+    transition: color 150ms var(--ease), flex-basis 160ms var(--ease);
+}
+/* Раскрытие по наведению делает thresholds.js: пиксельный flex-basis
+   анимируется, а flex-basis: auto — нет, поэтому :hover-правила
+   (скачок на полную ширину) намеренно нет. Сжатие (flex-shrink: 1)
+   разрешено — название не вытолкнет вкладки за правый край (прежние
+   потолки 148px/320px убраны из-за этого). При фокусе с клавиатуры
+   вкладка раскрывается через focus-visible. */
+.thresholds-tab:focus-visible {
+    flex: 1 1 auto;
+}
+/* Активная вкладка выделяется сдержанно: только чуть заметной
+   обводкой, без подсветки и смены фона. */
+.thresholds-tab.is-active {
+    border-color: var(--border-strong);
+    color: var(--text-dim);
+}
+.thresholds-tab:hover:not(.is-active) { color: var(--text-dim); }
+.thresholds-tab-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+/* Название раскрытой вкладки — по центру всей её области. */
+.thresholds-tab.is-title-expanded,
+.thresholds-tab:focus-visible {
+    justify-content: center;
+}
+.thresholds-tab.is-title-expanded .thresholds-tab-label,
+.thresholds-tab:focus-visible .thresholds-tab-label {
+    flex: 0 1 auto;
+    text-align: center;
+}
+
+/* ─── Карточка правила ───────────────────────────────────────────── */
+
+.thresholds-card {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    /* Полупрозрачная тёмная подложка, как у blade-card распределителя. */
+    background: rgba(15, 19, 23, 0.62);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 4px 6px;
+    overflow: hidden;
+}
+
+/* Одновременно видна только активная карточка; остальные скрыты.
+   Высота панели фиксирована, поэтому правая колонка не прокручивается. */
+.thresholds-card:not(.is-active) {
+    display: none;
+}
+
+/* Полное название правила в открытой карточке. */
+.thresholds-card-title {
+    flex: 0 0 auto;
+    min-width: 0;
+    padding: 1px 2px 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+    color: var(--text);
+    font: 700 9px var(--font-ui);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* ─── Строка параметра: название | число ────────────────────────── */
+
+/* Тело карточки: строки параметров + собственный вертикальный ползунок.
+   Область строк всегда одной высоты (заполняет карточку). Если строки
+   не помещаются — появляется ползунок; если все видны — скрыт. */
+.thresholds-card-body {
+    display: flex;
+    align-items: stretch;
+    gap: 7px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.thresholds-rows {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Прокрутку выполняет стилизованный ползунок справа. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.thresholds-rows::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+.thresholds-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 60px;
+    align-items: center;
+    gap: 8px;
+    min-height: 24px;
+}
+
+/* Очень лёгкий разделитель между соседними строками: помогает читать
+   длинный список порогов, но не превращает его в набор отдельных карточек. */
+.thresholds-item + .thresholds-item {
+    border-top: 1px solid rgba(48, 59, 68, 0.42);
+}
+
+.thresholds-item-label {
+    min-width: 0;
+    font-family: var(--font-ui);
+    font-size: 9px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: help;
+}
+
+.thresholds-input {
+    width: 100%;
+    min-width: 0;
+    height: 25px;
+    padding: 0 6px;
+    /* Только прямой ввод: без стрелок increment/decrement. */
+    appearance: textfield;
+    -moz-appearance: textfield;
+    background: var(--bg-0);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    user-select: text;
+}
+
+.thresholds-input::-webkit-inner-spin-button,
+.thresholds-input::-webkit-outer-spin-button {
+    margin: 0;
+    appearance: none;
+}
+
+.thresholds-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.thresholds-panel.is-locked .thresholds-input,
+.thresholds-input:disabled {
+    opacity: 0.55;
+}
+
+.thresholds-input:disabled {
+    cursor: not-allowed;
+}
+
+/* ─── Ползунок прокрутки карточки ──────────────────────────────────
+   Кастомный вертикальный скролл в стиле приложения: дорожка как
+   blade-track (bg-2 + border-strong + 999px), бегунок-квадратик как
+   blade-marker (12×14, accent, radius 2px). Сверху вниз: верх шкалы —
+   начало списка, низ — конец. Квадратик своим положением показывает,
+   в какой части списка находится просмотр. Виден только когда строки
+   не помещаются; если всё видно — полностью скрыт. */
+
+.thresholds-scroll-track {
+    flex: 0 0 10px;
+    width: 10px;
+    min-width: 10px;
+    align-self: stretch;
+    position: relative;
+    margin: 0;
+    background: var(--bg-2);
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.thresholds-scroll-thumb {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 14px;
+    height: 28px;
+    min-height: 22px;
+    border-radius: 3px;
+    background: var(--accent);
+    border: 1px solid var(--border-accent);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    transform: translateX(-50%);
+    cursor: grab;
+    will-change: top, height;
+    transition: background 150ms var(--ease), height 120ms var(--ease);
+}
+
+.thresholds-scroll-thumb:active,
+.thresholds-scroll-track.is-dragging .thresholds-scroll-thumb {
+    cursor: grabbing;
+    background: var(--accent);
+    filter: brightness(1.15);
+}
+
+.thresholds-scroll-track:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* Все строки карточки видны — ползунок не нужен и полностью скрыт. */
+.thresholds-scroll-track.is-idle {
+    display: none;
+}
+
+.thresholds-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.thresholds-status {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    color: var(--ok);
+}
+
+.thresholds-status.is-error {
+    color: var(--bad);
+}
+
+/* Кнопки «СОХРАНИТЬ» / «ОТМЕНИТЬ» порогов — .btn.btn-sm + зелёный
+   вариант .btn-thresholds-save; всё задано единообразно в controls.css. */

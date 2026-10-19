@@ -1,0 +1,221 @@
+/* controls.css — Line Monitor UI module */
+
+/* ─── Footer ──────────────────────────────────────────────────────── */
+
+.footer {
+    background: var(--bg-1);
+    border-top: 1px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 var(--margin);
+}
+
+/* Кнопки ПУСК/ПАУЗА/ПРОДОЛЖИТЬ/СТОП/ВЫХОД — у левого края футера.
+   Наследуют единый стиль .btn: один шрифт, одна логика наведения
+   (инверсия), сжатие при нажатии, приглушение недоступных. */
+.buttons {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 8px;
+    min-width: 0;
+}
+
+/* ─── Buttons — единый стиль и поведение ───────────────────────────
+   Все кнопки HMI используют один визуальный язык: шрифт, скругление,
+   рамку, верхний регистр, а также одинаковые hover / active / disabled /
+   focus-visible и одну кривую переходов.
+
+   Семантический цвет задаётся модификаторами:
+     .btn-ok / .btn-warn / .btn-bad / .btn-accent  (+ синонимы .btn-start,
+     .btn-pause, .btn-resume, .btn-stop, .btn-exit, .btn-archive-save,
+     .btn-thresholds-save, .btn-archive-settings — сохранены для JS/разметки).
+
+   Размер и контекст — модификаторами:
+     .btn-sm      компактная;
+     .btn-icon    квадратная (иконка-закрытие);
+     .btn-overlay кнопка поверх видео (тёмная подложка). */
+
+.btn {
+    /* Нейтральный вариант по умолчанию. */
+    --btn-color:        var(--text);
+    --btn-border:       var(--border-strong);
+    /* Инверсия при наведении: кнопка заливается этим цветом, текст
+       становится тёмным (--btn-invert-text). */
+    --btn-invert:       var(--accent);
+    --btn-invert-text:  var(--bg-0);
+    --btn-focus:        var(--accent);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 20px;
+    height: 40px;
+    min-width: 112px;
+    border: 1px solid var(--btn-border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-2);
+    color: var(--btn-color);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        color var(--t-normal) var(--ease),
+        border-color var(--t-normal) var(--ease),
+        background-color var(--t-normal) var(--ease),
+        transform var(--t-fast) var(--ease),
+        box-shadow var(--t-fast) var(--ease);
+}
+
+/* Единое поведение для всех кнопок: полная инверсия при наведении. */
+.btn:hover:not(:disabled) {
+    background: var(--btn-invert);
+    border-color: var(--btn-invert);
+    color: var(--btn-invert-text);
+}
+.btn:active:not(:disabled) {
+    transform: scale(0.97);
+    transition-duration: 60ms;
+}
+.btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+.btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--btn-focus);
+}
+
+/* Обратная связь команды (мигание) — только оформление. */
+.btn-flash { animation: btnFlash 0.18s var(--ease); }
+
+@keyframes btnFlash {
+    0%, 100% { outline: 0 solid transparent; }
+    50% { outline: 1px solid currentColor; outline-offset: 2px; }
+}
+
+/* Команда в процессе: жёлтая рамка/текст — едино для диагностики и
+   прочих действий с ожиданием. */
+.btn.pending {
+    --btn-color:       var(--warn);
+    --btn-border:      var(--warn);
+    --btn-invert:      var(--warn);
+    --btn-focus:       var(--warn);
+}
+
+/* ─── Семантические варианты (цвет) ─────────────────────────────── */
+
+.btn-ok,
+.btn-start,
+.btn-resume,
+.btn-archive-save,
+.btn-thresholds-save {
+    --btn-color:  var(--ok);
+    --btn-border: var(--ok);
+    --btn-invert: var(--ok);
+    --btn-focus:  var(--ok);
+}
+
+.btn-warn,
+.btn-pause {
+    --btn-color:  var(--warn);
+    --btn-border: var(--warn);
+    --btn-invert: var(--warn);
+    --btn-focus:  var(--warn);
+}
+
+.btn-bad,
+.btn-stop,
+.btn-exit {
+    --btn-color:  var(--bad);
+    --btn-border: var(--bad);
+    --btn-invert: var(--bad);
+    --btn-focus:  var(--bad);
+}
+
+.btn-accent,
+.btn-archive-settings {
+    --btn-color:  var(--accent);
+    --btn-border: var(--accent);
+    --btn-invert: var(--accent);
+    --btn-focus:  var(--accent);
+}
+
+/* ─── Размеры и контекст ────────────────────────────────────────── */
+
+.btn-sm {
+    height: 28px;
+    min-width: 0;
+    padding: 4px 12px;
+}
+
+.btn-icon {
+    width: 28px;
+    height: 28px;
+    min-width: 0;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.btn-icon-lg {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+}
+
+.btn-overlay {
+    height: 34px;
+    min-width: 0;
+    padding: 0 14px;
+    background: rgba(15, 19, 23, 0.94);
+}
+
+.btn-overlay.analysis-active {
+    --btn-color:  var(--warn);
+    --btn-border: var(--warn);
+    --btn-invert: var(--warn);
+    --btn-focus:  var(--warn);
+}
+
+/* ─── Сервисная группа футера ──────────────────────────────────
+   Настройки хранения партий — сервисное действие: вынесены из ряда
+   кнопок ПУСК/СТОП/ВЫХОД в правый край футера и отделены вертикальным
+   разделителем. Кнопка активна только когда линия остановлена (см.
+   archiveSettingsEditable). */
+.footer-archive {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding-left: 12px;
+    border-left: 1px solid var(--border-strong);
+}
+
+.footer-archive-label {
+    overflow: hidden;
+    color: var(--text-dim);
+    font-family: var(--font-ui);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+    .btn { min-width: 96px; padding-inline: 12px; }
+}
+
+@media (max-width: 900px) {
+    .footer-archive-label { display: none; }
+}
+

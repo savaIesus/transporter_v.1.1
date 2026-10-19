@@ -1,0 +1,160 @@
+/* archive.css — выбор папки обязательного архива партий */
+
+/* Кнопка «АРХИВ» в футере — .btn .btn-archive-settings (акцентный
+   вариант задан в controls.css). Шрифт, размер и ширина — как у
+   остальных кнопок футера: отличаются только цветом. */
+
+
+.archive-settings-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 550;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.archive-settings-modal.is-hidden { display: none !important; }
+
+.archive-settings-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.78);
+}
+
+.archive-settings-dialog {
+    position: relative;
+    width: min(680px, 92vw);
+    max-height: 88vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-1);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
+}
+
+.archive-settings-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.archive-settings-head h2 {
+    min-width: 0;
+    color: var(--accent);
+    font: 700 12px var(--font-ui);
+    letter-spacing: 1px;
+}
+
+/* Кнопка закрытия модального окна — .btn.btn-icon; деструктивный
+   акцент при наведении задаётся инверсией в красный. */
+.archive-settings-close {
+    flex: 0 0 auto;
+    --btn-color: var(--text-dim);
+    --btn-invert: var(--bad);
+    --btn-focus: var(--bad);
+}
+
+.archive-settings-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    overflow-y: auto;
+}
+
+.archive-settings-row {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.archive-settings-row > label {
+    color: var(--text-dim);
+    font: 700 9px var(--font-ui);
+    letter-spacing: 0.45px;
+}
+
+.archive-settings-path-controls {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+}
+
+.archive-settings-body input[type="text"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 30px;
+    padding: 4px 8px;
+    background: var(--bg-0);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font: 600 10px var(--font-mono);
+    user-select: text;
+}
+.archive-settings-body input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.archive-settings-validation {
+    min-height: 18px;
+    color: var(--text-muted);
+    font: 600 9px var(--font-ui);
+    overflow-wrap: anywhere;
+}
+.archive-settings-validation.ok { color: var(--ok); }
+.archive-settings-validation.error { color: var(--bad); }
+
+.archive-settings-batch {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) repeat(3, auto);
+    gap: 8px;
+    align-items: center;
+    padding-top: 9px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font: 700 8px var(--font-mono);
+}
+.archive-settings-batch span { white-space: nowrap; }
+.archive-settings-batch span:first-child { overflow: hidden; text-overflow: ellipsis; }
+.archive-settings-batch b { color: var(--text); margin-left: 3px; }
+.archive-settings-batch span:nth-child(3) b { color: var(--bad); }
+.archive-settings-batch span:nth-child(4) b { color: var(--warn); }
+
+.archive-settings-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+}
+.archive-settings-status {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--text-muted);
+    font: 600 9px var(--font-ui);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.archive-settings-status.is-error { color: var(--bad); }
+/* Кнопка «СОХРАНИТЬ» настроек архива — .btn.btn-archive-save;
+   зелёный вариант задан в controls.css (группа .btn-ok). */
+
+@media (max-width: 600px) {
+    .archive-settings-row { grid-template-columns: 1fr; gap: 4px; }
+    .archive-settings-batch { grid-template-columns: repeat(3, auto); }
+    .archive-settings-batch span:first-child { grid-column: 1 / -1; }
+    .archive-settings-path-controls { flex-wrap: wrap; }
+    .archive-settings-path-controls input { flex-basis: 100%; }
+}

@@ -1,0 +1,20 @@
+{
+  "camera_roles": [
+    "INPUT_LEFT",
+    "INPUT_RIGHT",
+    "SPIDER_LEFT",
+    "SPIDER_RIGHT",
+    "SPIDER_IN",
+    "SPIDER_OUT",
+    "TOP"
+  ],
+  "defect_classes": [
+    "glass",
+    "black_spot",
+    "window_sink",
+    "long_omission",
+    "short_omission",
+    "missing_contact",
+    "other"
+  ]
+}

@@ -1,0 +1,65 @@
+"""Начальный снимок статуса линии для HMI."""
+
+
+def make_idle_status(distributor) -> dict:
+    return {
+        "state": "IDLE",
+        "exit_requested": False,
+        "fault_reason": None,
+        "step": 0,
+        "in_line": 0,
+        "line_parts": [],
+        "total": 0,
+        "good": 0,
+        "rejected": 0,
+        "cleanup": 0,
+        "empty": 0,
+        "dist1_position": 0,
+        "dist1_max": distributor.dist1_open_position,
+        "dist1_state": "IDLE",
+        "dist2_position": 0,
+        "dist2_max": distributor.dist2_cleanup_position,
+        "dist2_state": "IDLE",
+        "dist2_target": "BAD",
+        "last_distributor_action": "-",
+        "process": {
+            "phase": "IDLE",
+            "label": "Система готова к пуску",
+            "step": 0,
+            "part_id": None,
+            "conveyor": {},
+        },
+        "diagnostic_allowed": False,
+        "diagnostic_busy": False,
+        "controls": {
+            "start": False,
+            "stop": False,
+            "exit": True,
+            "jog_hold": False,
+            "selected_model_analysis": False,
+            "selected_model_release": False,
+            "distributor_diagnostic": False,
+            "camera_diagnostic": False,
+            "vision_rule_diagnostic": False,
+        },
+        "selected_analysis": {
+            "active": False,
+            "role": None,
+        },
+        "live": {
+            "running": False,
+            "streaming": False,
+            "static": False,
+            "fps": 0.0,
+        },
+        "frame_analysis": {
+            "available": False,
+            "kind": None,
+            "rules": [],
+        },
+        "jog": {
+            "active": False,
+            "can_enter": False,
+            "busy": False,
+        },
+    }

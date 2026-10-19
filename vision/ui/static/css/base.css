@@ -1,0 +1,261 @@
+/* base.css — Line Monitor UI module */
+
+/* ─── Design tokens ───────────────────────────────────────────────── */
+
+:root {
+    /* Один шрифт во всей HMI. Старое имя --font-mono оставлено как
+       совместимый токен для числовых полей, но использует ту же гарнитуру. */
+    --font-ui:      'Segoe UI', Arial, sans-serif;
+    --font-mono:    'Segoe UI', Arial, sans-serif;
+
+    --bg-0:         #0f1317;
+    --bg-1:         #13191e;
+    --bg-2:         #182027;
+
+    --panel:        #182027;
+    --panel-raised: #1c252d;
+    --panel-hover:  #222d36;
+
+    --border:           #303b44;
+    --border-strong:    #44515c;
+    --border-accent:    #607985;
+
+    --text:         #e0e5e9;
+    --text-dim:     #9aa5ad;
+    --text-muted:   #69747c;
+
+    --accent:       #7899a5;
+    --accent-glow:  rgba(120, 153, 165, 0.12);
+
+    /* Цвет используется только для состояния и результата. */
+    --ok:           #72a37e;
+    --ok-bg:        rgba(114, 163, 126, 0.10);
+
+    --bad:          #c97676;
+    --bad-bg:       rgba(201, 118, 118, 0.10);
+
+    --warn:         #c1a66a;
+    --warn-bg:      rgba(193, 166, 106, 0.10);
+
+    /* Полупрозрачная заливка блока распределителя по маршруту детали. */
+    --ok-fill:      rgba(114, 163, 126, 0.18);
+    --bad-fill:     rgba(201, 118, 118, 0.18);
+    --warn-fill:    rgba(193, 166, 106, 0.18);
+
+    --footer-h:     58px;
+    --gap:          12px;
+    --margin:       16px;
+    --radius:       4px;
+    --radius-lg:    5px;
+    --radius-sm:    3px;
+
+    --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.24);
+    --shadow-md:    0 3px 10px rgba(0, 0, 0, 0.24);
+
+    --ease:         cubic-bezier(0.4, 0, 0.2, 1);
+    --t-fast:       100ms;
+    --t-normal:     150ms;
+    --t-slow:       200ms;
+}
+
+/* ─── Reset ───────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    font-family: var(--font-ui);
+    background: var(--bg-0);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+}
+
+.is-hidden {
+    display: none !important;
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--bg-0);
+}
+
+/* ─── Splash / Boot screen ────────────────────────────────────────── */
+
+.splash {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.4s var(--ease);
+}
+
+.splash-fadeout {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.splash-inner {
+    width: 560px;
+    max-width: 92vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 48px 40px;
+    animation: splashFadeIn 0.5s var(--ease);
+}
+
+.splash-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    line-height: 1.2;
+    text-align: center;
+    white-space: normal;
+    max-width: 100%;
+}
+
+.splash-status {
+    color: var(--text-dim);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    width: 100%;
+    display: block;
+}
+
+#splash-message {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 500px;
+    vertical-align: bottom;
+}
+
+.splash-progress-bar {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.splash-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.4s var(--ease);
+}
+
+.dots::after {
+    content: '';
+    animation: dots 1.4s steps(4, end) infinite;
+    color: var(--accent);
+    margin-left: 2px;
+}
+
+@keyframes dots {
+    0%   { content: ''; }
+    25%  { content: '.'; }
+    50%  { content: '..'; }
+    75%  { content: '...'; }
+    100% { content: ''; }
+}
+
+@keyframes splashFadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.splash-error {
+    width: 100%;
+    padding: 14px 18px;
+    background: var(--bad-bg);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    overflow: hidden;
+}
+
+.splash-error-title {
+    color: var(--bad);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.splash-error-message {
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: block;
+}
+
+/* ─── Main layout ─────────────────────────────────────────────────── */
+
+.main {
+    display: grid;
+    grid-template-rows: 1fr var(--footer-h);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* ─── Body ────────────────────────────────────────────────────────── */
+
+.body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: var(--gap);
+    padding: var(--gap);
+    overflow: hidden;
+    min-height: 0;
+}
+
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    min-width: 0;
+    min-height: 0;
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.stats-panel,
+.jog-panel {
+    grid-column: 2;
+    grid-row: 1;
+}

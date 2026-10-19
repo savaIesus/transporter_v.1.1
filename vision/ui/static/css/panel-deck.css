@@ -1,0 +1,265 @@
+/* panel-deck.css — варианты правой панели с переворотом (rotateY).
+ *
+ * Правая панель — «колода лиц». Одновременно видно одно лицо:
+ *   ready       — ПОДГОТОВКА (IDLE / STOPPED): статистика, распределитель
+ *                 с кнопками, пороги, ручное управление;
+ *   production  — ПРОИЗВОДСТВО (RUNNING / PAUSED / STOPPING): статистика,
+ *                 распределитель без кнопок, анализ кадра, ручное
+ *                 управление под шторкой с замком;
+ *   fault       — АВАРИЯ (FAULT): причина аварии и корпуса на линии.
+ *
+ * Переворот выполняется панелью самой по себе (self-perspective): JS
+ * анимирует rotateY 0° → 90°, на ребре меняет data-face, затем
+ * доворачивает -90° → 0°. Задняя сторона не показывается.
+ */
+
+.stats-panel {
+    transform-origin: center center;
+    backface-visibility: hidden;
+}
+
+/* Во время переворота панель не ловит клики. */
+.stats-panel.panel-flipping {
+    pointer-events: none;
+    will-change: transform;
+}
+
+/* При смене лица шторка проходит весь путь ровно за время полного
+   переворота. На RUNNING ↔ PAUSED лицо не меняется и остаётся её обычная
+   короткая анимация 320 мс. */
+.stats-panel.panel-flipping .jog-shutter {
+    transition-duration: var(--panel-flip-duration, 560ms);
+    transition-timing-function: cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+/* ─── Лицо «ПРОИЗВОДСТВО» ─────────────────────────────────────── */
+
+/* Распределитель без кнопок диагностики. */
+.stats-panel[data-face="production"] .blade-diagnostic-grid {
+    display: none;
+}
+
+/* Пороги правил видны только на остановленной линии. */
+.stats-panel[data-face="production"] #thresholds-panel {
+    display: none;
+}
+
+/* Ручное управление остаётся видимым, но накрыто шторкой, когда JOG
+   заблокирован (RUNNING / STOPPING). На паузе JOG доступен, поэтому
+   шторка поднята и блок управления работает. Снимаем схлопывание,
+   которое ставит jog.js в движущемся состоянии. */
+.stats-panel.jog-locked #jog-panel.ui-collapse {
+    max-height: 190px !important;
+    padding-top: 7px !important;
+    padding-bottom: 8px !important;
+    border-color: var(--border) !important;
+    opacity: 1 !important;
+    transform: none !important;
+    overflow: visible !important;
+    pointer-events: auto;
+}
+
+/* ─── Лицо «АВАРИЯ» ───────────────────────────────────────────── */
+
+.stats-panel[data-face="fault"] {
+    border-color: var(--bad);
+}
+
+.stats-panel[data-face="fault"] .stats-summary,
+.stats-panel[data-face="fault"] .distributor-panel,
+.stats-panel[data-face="fault"] .thresholds-panel,
+.stats-panel[data-face="fault"] .frame-analysis-panel-new,
+.stats-panel[data-face="fault"] .jog-deck {
+    display: none;
+}
+
+/* Карточка аварии скрыта по умолчанию и показывается только на лице
+   «АВАРИЯ» (там же задаётся display:flex с более высоким приоритетом). */
+#fault-face {
+    display: none;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px 14px;
+    text-align: center;
+    background:
+        radial-gradient(120% 90% at 50% 0%, var(--bad-bg), transparent 62%),
+        var(--bg-1);
+    border: 1px solid var(--bad);
+    border-radius: var(--radius);
+    animation: faultFaceIn 260ms var(--ease);
+}
+.stats-panel[data-face="fault"] #fault-face {
+    display: flex;
+}
+
+.fault-face-icon {
+    width: 46px;
+    height: 46px;
+    color: var(--bad);
+}
+.fault-face-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.fault-face-title {
+    color: var(--bad);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.fault-face-reason {
+    color: var(--text);
+    font-size: 11px;
+    line-height: 1.45;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.fault-face-inline {
+    color: var(--text-dim);
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.fault-face-hint {
+    color: var(--text-muted);
+    font-size: 8px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+@keyframes faultFaceIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Шторка ручного управления ───────────────────────────────── */
+
+.jog-deck {
+    position: relative;
+    flex: 0 0 auto;
+    /* Прижимаем к низу колонки, как раньше сам блок jog-panel. */
+    margin-top: auto;
+    background: var(--panel);
+    /* Та же спокойная граница, что у остальных внутренних блоков справа. */
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    /* Внешняя рамка принадлежит deck, а не движущейся шторке: поэтому
+       границы ручного управления остаются видимыми на всём ходе анимации. */
+    overflow: hidden;
+}
+
+/* Внутренние лица не рисуют вторую рамку поверх постоянной внешней. */
+.jog-deck #jog-panel,
+.jog-deck .jog-shutter {
+    border: 0;
+    border-radius: 0;
+}
+
+.jog-shutter {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-103%);
+    transition: transform 320ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    /* Матовая цельная панель без декоративных полос: тонкий верхний
+       блик и нижняя тень дают глубину, не создавая визуального шума. */
+    background: #161d23;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    box-shadow:
+        inset 0 1px rgba(255, 255, 255, 0.035),
+        inset 0 -8px 16px rgba(0, 0, 0, 0.18),
+        0 5px 12px rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+    /* Шторка декоративная: она не должна перехватывать клики
+       (кнопки под ней и так заблокированы backend-ом). */
+    pointer-events: none;
+}
+
+.stats-panel.jog-locked .jog-shutter {
+    transform: translateY(0);
+}
+
+.jog-shutter-body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 0;
+}
+
+.jog-shutter-lock {
+    width: 24px;
+    height: 24px;
+    color: var(--warn);
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 6px rgba(193, 166, 106, 0.35));
+}
+
+/* Замок «щёлкает» чуть позже остановки шторки. */
+.stats-panel.jog-locked .jog-shutter-lock {
+    animation: lockClick 260ms var(--ease) 280ms both;
+}
+
+@keyframes lockClick {
+    0%   { transform: translateY(-7px) scale(0.85); opacity: 0; }
+    55%  { transform: translateY(1px)  scale(1.08); }
+    100% { transform: translateY(0)    scale(1);    opacity: 1; }
+}
+
+.jog-shutter-caption {
+    color: var(--warn);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.jog-shutter-sub {
+    color: var(--text-muted);
+    font-size: 7px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* ─── Уменьшение движения ─────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .jog-shutter {
+        transition-duration: 1ms;
+    }
+    .stats-panel.jog-locked .jog-shutter-lock {
+        animation: none;
+    }
+    #fault-face {
+        animation: none;
+    }
+}

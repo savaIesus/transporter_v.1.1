@@ -1,0 +1,137 @@
+/* jog.css — Line Monitor UI module */
+
+/* ─── JOG panel ───────────────────────────────────────────────────── */
+
+.jog-panel {
+    background: var(--panel);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius);
+    padding: 20px 20px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-height: 0;
+    overflow-y: auto;
+    box-shadow: none;
+}
+
+.jog-panel::-webkit-scrollbar { width: 6px; }
+.jog-panel::-webkit-scrollbar-track { background: transparent; }
+.jog-panel::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+.jog-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+}
+
+.jog-title {
+    color: var(--text-dim);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+/* ─── JOG D-pad ────────────────────────────────────────────────── */
+
+.jog-dpad {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.jog-hold-btn {
+    width: 100%;
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.jog-hold-arrow {
+    display: block;
+    width: 24px;
+    height: 24px;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+}
+
+.jog-dpad-btn {
+    position: relative;
+    background: var(--panel-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+        color var(--t-fast) var(--ease),
+        border-color var(--t-fast) var(--ease),
+        background var(--t-fast) var(--ease),
+        box-shadow var(--t-fast) var(--ease),
+        transform var(--t-fast) var(--ease);
+    min-height: 76px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 6px;
+    overflow: hidden;
+}
+
+.jog-dpad-btn.jog-hold-btn {
+    display: grid;
+    place-items: center;
+    padding: 0;
+}
+
+.jog-dpad-btn::before {
+    content: none;
+}
+
+/* Единое с остальными кнопками поведение: при наведении — инверсия
+   в акцентный цвет (тёмная стрелка на светлой кнопке), нажатие —
+   сжатие, недоступность — приглушение, фокус — кольцо. При активном
+   удержании инверсия не перекрывает состояние jog-active. */
+.jog-dpad-btn:hover:not(:disabled):not(.jog-active) {
+    border-color: var(--accent);
+    color: var(--bg-0);
+    background: var(--accent);
+}
+
+.jog-dpad-btn:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
+.jog-dpad-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.jog-dpad-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent);
+}
+
+.jog-dpad-btn.jog-active {
+    background: var(--accent-glow);
+    color: var(--text);
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent);
+}
+

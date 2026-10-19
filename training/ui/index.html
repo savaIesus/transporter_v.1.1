@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Мастер датасета YOLO</title>
+    <link rel="stylesheet" href="/static/training.css?v=1">
+</head>
+<body>
+    <main class="app-shell">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">CONVEYER SEVEN · TRAINING</p>
+                <h1>Сбор датасета дефектов</h1>
+            </div>
+            <div id="connection-state" class="connection-state">ПОДКЛЮЧЕНИЕ…</div>
+        </header>
+
+        <section id="setup-panel" class="panel setup-panel">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">ШАГ 1</p>
+                    <h2>Создать набор изображений</h2>
+                </div>
+                <span class="step-badge">НАСТРОЙКА</span>
+            </div>
+            <p class="hint">
+                Для каждой детали мастер по очереди покажет кадр каждой выбранной камеры.
+                Исходник сохраняется сразу, а после ответа оператора создаются overlay и YOLO-разметка.
+            </p>
+            <div class="form-grid">
+                <label class="field field-wide">
+                    <span>Название набора</span>
+                    <input id="dataset-name" type="text" value="defects" maxlength="60"
+                           placeholder="например, корпус_май_2026">
+                </label>
+                <label class="field field-wide">
+                    <span>Классы дефектов <small>(через запятую)</small></span>
+                    <input id="defect-classes" type="text"
+                           placeholder="glass, black_spot, other">
+                </label>
+            </div>
+            <div class="field-group">
+                <span class="field-label">Камеры и порядок показа</span>
+                <div id="camera-roles" class="check-grid"></div>
+            </div>
+            <div class="actions setup-actions">
+                <button id="create-session" class="button primary">СОЗДАТЬ НАБОР</button>
+                <span id="setup-message" class="inline-message"></span>
+            </div>
+        </section>
+
+        <section id="work-panel" class="work-layout hidden">
+            <aside class="panel session-panel">
+                <div class="panel-heading compact">
+                    <div>
+                        <p class="eyebrow">СЕССИЯ</p>
+                        <h2 id="session-title">—</h2>
+                    </div>
+                    <span id="session-status" class="status-pill">ГОТОВА</span>
+                </div>
+                <div class="stats-grid">
+                    <div><span>Деталей</span><strong id="parts-count">0</strong></div>
+                    <div><span>Кадров</span><strong id="frames-count">0</strong></div>
+                </div>
+                <div class="part-card">
+                    <div class="part-card-top">
+                        <span class="eyebrow">ТЕКУЩАЯ ДЕТАЛЬ</span>
+                        <strong id="part-number">—</strong>
+                    </div>
+                    <div id="part-progress" class="part-progress">Начните новую деталь</div>
+                    <button id="new-part" class="button primary full">НОВАЯ ДЕТАЛЬ</button>
+                    <button id="finish-part" class="button secondary full" disabled>ЗАВЕРШИТЬ ДЕТАЛЬ</button>
+                </div>
+                <div class="session-actions">
+                    <button id="export-dataset" class="button secondary full" disabled>ОБНОВИТЬ YOLO-ЭКСПОРТ</button>
+                    <button id="finish-session" class="button danger full" disabled>ЗАВЕРШИТЬ НАБОР</button>
+                </div>
+                <div id="workflow-message" class="workflow-message"></div>
+            </aside>
+
+            <section class="panel capture-panel">
+                <div class="capture-header">
+                    <div>
+                        <p class="eyebrow">ШАГ 2 · ПОСЛЕДОВАТЕЛЬНАЯ РАЗМЕТКА</p>
+                        <h2 id="camera-title">Ожидание детали</h2>
+                    </div>
+                    <div id="frame-id" class="frame-id">FRAME —</div>
+                </div>
+                <div id="canvas-wrap" class="canvas-wrap empty">
+                    <div id="empty-state" class="empty-state">
+                        <div class="empty-icon">◎</div>
+                        <strong>Кадр ещё не снят</strong>
+                        <span>Начните деталь — камера будет показана здесь</span>
+                    </div>
+                    <img id="frame-image" alt="Кадр выбранной камеры">
+                    <canvas id="annotation-canvas"></canvas>
+                </div>
+                <div class="frame-meta">
+                    <span id="frame-role">КАМЕРА —</span>
+                    <span id="frame-size">— × —</span>
+                    <span id="annotation-help">Кликайте вершины контура и завершите область кнопкой</span>
+                </div>
+                <div class="palette-panel">
+                    <div class="palette-heading">
+                        <span class="field-label">ПАЛИТРА ЭЛЕМЕНТОВ</span>
+                        <span class="palette-hint">Выберите элемент и обведите одну или несколько областей</span>
+                    </div>
+                    <div id="element-palette" class="element-palette"></div>
+                    <div class="palette-add-row">
+                        <input id="new-element" type="text" maxlength="50"
+                               placeholder="например, contact или omission" disabled>
+                        <button id="add-element" class="button neutral" disabled>ДОБАВИТЬ ЭЛЕМЕНТ</button>
+                    </div>
+                </div>
+                <div class="annotation-controls">
+                    <label class="field defect-field">
+                        <span>Выбранный элемент</span>
+                        <select id="defect-class" disabled></select>
+                    </label>
+                    <button id="finish-polygon" class="button secondary" disabled>ЗАВЕРШИТЬ ОБЛАСТЬ</button>
+                    <button id="no-defect" class="button neutral" disabled>ДЕФЕКТА НЕТ</button>
+                    <button id="clear-box" class="button neutral" disabled>ОЧИСТИТЬ ОБЛАСТИ</button>
+                </div>
+                <div class="actions capture-actions">
+                    <button id="save-annotation" class="button primary" disabled>ГОТОВО</button>
+                    <button id="next-camera" class="button secondary" disabled>СЛЕДУЮЩАЯ КАМЕРА</button>
+                </div>
+                <div id="annotation-message" class="inline-message"></div>
+            </section>
+        </section>
+
+        <section id="result-panel" class="panel result-panel hidden">
+            <div class="result-icon">✓</div>
+            <div>
+                <p class="eyebrow">СЕССИЯ ЗАВЕРШЕНА</p>
+                <h2>Датасет готов к обучению</h2>
+                <p id="result-text" class="hint"></p>
+            </div>
+            <code id="result-yaml"></code>
+        </section>
+    </main>
+    <script src="/static/training.js?v=1"></script>
+</body>
+</html>

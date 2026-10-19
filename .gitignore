@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Локальное окружение (setup.bat создаёт .venv)
+.venv/
+
+# Исполняемые данные: архив партий и отладочные кадры
+archive/
+debug_frames/
+
+# Данные замеров покрытия
+.coverage
+htmlcov/
