@@ -601,9 +601,15 @@ class TrainingCollector:
         config: TrainingConfig | None = None,
         *,
         frame_source: CameraFrameSource | None = None,
+        conveyor: Any | None = None,
     ):
         self.config = config or TrainingConfig()
         self.frame_source = frame_source
+        # Объект с методом ``advance()``: шаг ленты к следующей детали после
+        # нажатия «Завершить деталь». ``None`` отключает движение, чтобы
+        # мастер можно было использовать без подключённого контроллера.
+        self.conveyor = conveyor
+        self.last_conveyor_result: dict[str, Any] | None = None
         self.store: TrainingDatasetStore | None = None
         self.current_part_id: int | None = None
         self.current_frame_id: int | None = None
@@ -763,7 +769,67 @@ class TrainingCollector:
             part = self.store.finish_part(self.current_part_id)
             self.current_part_id = None
             self.current_frame_id = None
-            return self.snapshot(extra={"finished_part": part})
+
+        # Шаг выполняется вне блокировки: опрос ``/api/training/state`` не
+        # должен ждать, пока лента физически пройдёт расстояние до
+        # следующего корпуса.
+        movement = self._advance_conveyor()
+        with self._lock:
+            return self.snapshot(
+                extra={
+                    "finished_part": part,
+                    "conveyor": movement,
+                }
+            )
+
+    def _advance_conveyor(self) -> dict[str, Any]:
+        """Сделать один шаг ленты к следующей детали.
+
+        Разметка к этому моменту уже сохранена на диске, поэтому сбой
+        оборудования не отменяет завершение детали: оператор получает
+        результат шага в поле ``conveyor`` и может повторить его кнопкой
+        «Сдвинуть ленту», не теряя открытую сессию.
+        """
+        if self.conveyor is None:
+            result: dict[str, Any] = {
+                "enabled": False,
+                "moved": False,
+                "error": None,
+            }
+        else:
+            try:
+                result = {
+                    "enabled": True,
+                    **dict(self.conveyor.advance() or {}),
+                }
+                result.setdefault("moved", False)
+            except Exception as exc:
+                result = {
+                    "enabled": True,
+                    "moved": False,
+                    "error": str(exc),
+                }
+        self.last_conveyor_result = result
+        return result
+
+    def step_conveyor(self) -> dict[str, Any]:
+        """Повторить шаг ленты вручную после сбоя оборудования.
+
+        Двигать ленту посреди детали нельзя: кадры и разметка относятся к
+        текущему положению корпуса. Поэтому шаг разрешён только между
+        деталями.
+        """
+        with self._lock:
+            self._require_session()
+            if self.current_frame_id is not None:
+                raise CollectorError("Сначала сохраните разметку текущего кадра")
+            if self.current_part_id is not None:
+                raise CollectorError(
+                    f"Деталь #{self.current_part_id} ещё не завершена"
+                )
+        movement = self._advance_conveyor()
+        with self._lock:
+            return self.snapshot(extra={"conveyor": movement})
 
     def finish_session(self) -> dict[str, Any]:
         with self._lock:

@@ -38,6 +38,29 @@ def main(argv=None) -> None:
     parser.add_argument("--mapping", default="camera_mapping.json")
     parser.add_argument("--config", help="JSON с camera_roles и defect_classes")
     parser.add_argument("--open-browser", action="store_true")
+    parser.add_argument(
+        "--conveyor",
+        choices=("auto", "off"),
+        default=os.environ.get("TRAINING_CONVEYOR", "auto"),
+        help=(
+            "auto — после «Завершить деталь» делать шаг ленты G3, "
+            "off — не управлять конвейером"
+        ),
+    )
+    parser.add_argument(
+        "--serial-port",
+        default=os.environ.get("SERIAL_PORT"),
+        help="COM-порт контроллера; по умолчанию ищется автоматически",
+    )
+    parser.add_argument(
+        "--baudrate",
+        type=int,
+        default=int(os.environ.get("SERIAL_BAUD", "115200")),
+    )
+    parser.add_argument(
+        "--calibration",
+        default=os.environ.get("CALIBRATION_FILE", "calibration.json"),
+    )
     args = parser.parse_args(argv)
 
     options = _load_options(args.config)
@@ -54,9 +77,21 @@ def main(argv=None) -> None:
     from vision.camera_manager import CameraManager
 
     cameras = CameraManager(config_file=args.mapping)
+    stepper = None
+    if args.conveyor != "off":
+        # Импорт pyserial и hardware происходит только здесь: запуск мастера
+        # без оборудования не должен требовать наличия контроллера.
+        from training.conveyor import SerialConveyorStepper
+
+        stepper = SerialConveyorStepper(
+            baudrate=args.baudrate,
+            preferred_port=args.serial_port,
+            calibration_path=args.calibration,
+        )
     collector = TrainingCollector(
         config,
         frame_source=CollectorCameraSource(cameras),
+        conveyor=stepper,
     )
     app = create_app(collector)
     url = f"http://127.0.0.1:{args.port}/"
@@ -64,6 +99,13 @@ def main(argv=None) -> None:
     print("Мастер сбора датасета YOLO")
     print(f"Откройте {url}")
     print("Линия должна быть остановлена; камеры заняты только этим мастером.")
+    if stepper is not None:
+        print(
+            "Шаг ленты: после «ЗАВЕРШИТЬ ДЕТАЛЬ» отправляется G3 N<seq> "
+            "и ожидается подтверждение STEP."
+        )
+    else:
+        print("Шаг ленты отключён (--conveyor off).")
     print("=" * 64)
     if args.open_browser:
         webbrowser.open(url)
@@ -71,6 +113,8 @@ def main(argv=None) -> None:
         uvicorn.run(app, host=args.host, port=args.port, log_level="info")
     finally:
         cameras.release()
+        if stepper is not None:
+            stepper.close()
 
 
 def _load_options(path: str | None) -> dict:

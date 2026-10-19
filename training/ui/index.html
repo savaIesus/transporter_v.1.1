@@ -27,6 +27,7 @@
             <p class="hint">
                 Для каждой детали мастер по очереди покажет кадр каждой выбранной камеры.
                 Исходник сохраняется сразу, а после ответа оператора создаются overlay и YOLO-разметка.
+                Кнопка «ЗАВЕРШИТЬ ДЕТАЛЬ» дополнительно делает шаг ленты к следующему корпусу.
             </p>
             <div class="form-grid">
                 <label class="field field-wide">
@@ -71,6 +72,8 @@
                     <div id="part-progress" class="part-progress">Начните новую деталь</div>
                     <button id="new-part" class="button primary full">НОВАЯ ДЕТАЛЬ</button>
                     <button id="finish-part" class="button secondary full" disabled>ЗАВЕРШИТЬ ДЕТАЛЬ</button>
+                    <button id="step-conveyor" class="button neutral full" disabled
+                            title="Ручной шаг ленты G3, если автоматический шаг не выполнился">СДВИНУТЬ ЛЕНТУ</button>
                 </div>
                 <div class="session-actions">
                     <button id="export-dataset" class="button secondary full" disabled>ОБНОВИТЬ YOLO-ЭКСПОРТ</button>
@@ -140,6 +143,6 @@
             <code id="result-yaml"></code>
         </section>
     </main>
-    <script src="/static/training.js?v=1"></script>
+    <script src="/static/training.js?v=2"></script>
 </body>
 </html>

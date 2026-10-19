@@ -26,17 +26,26 @@ def create_app(
     *,
     frame_source=None,
     config: TrainingConfig | None = None,
+    conveyor=None,
 ) -> FastAPI:
     """Создать независимое приложение мастера обучения.
 
     Для production-запуска передайте ``CameraManager``-адаптер через
-    ``frame_source``. В тестах удобно передать уже созданный
-    ``TrainingCollector`` с фейковым источником кадров.
+    ``frame_source``, а шаг ленты — через ``conveyor``. В тестах удобно
+    передать уже созданный ``TrainingCollector`` с фейковым источником
+    кадров.
     """
     if collector is None:
-        collector = TrainingCollector(config or TrainingConfig(), frame_source=frame_source)
-    elif frame_source is not None:
-        collector.frame_source = frame_source
+        collector = TrainingCollector(
+            config or TrainingConfig(),
+            frame_source=frame_source,
+            conveyor=conveyor,
+        )
+    else:
+        if frame_source is not None:
+            collector.frame_source = frame_source
+        if conveyor is not None:
+            collector.conveyor = conveyor
 
     app = FastAPI(
         title="Мастер сбора датасета YOLO",
@@ -70,6 +79,7 @@ def create_app(
                 "defect_classes": list(item.config.defect_classes),
                 "yolo_task": item.config.yolo_task,
                 "root_folder": str(item.config.root_folder),
+                "conveyor_step": item.conveyor is not None,
             }
         )
 
@@ -224,6 +234,19 @@ def create_app(
             result = await asyncio.to_thread(item.finish_part)
         except CollectorError as exc:
             return _error_response(exc, 409)
+        except Exception as exc:
+            return _error_response(exc, 500)
+        return JSONResponse(_json_safe(result))
+
+    @app.post("/api/training/conveyor/step")
+    async def step_conveyor():
+        item = current_collector()
+        try:
+            result = await asyncio.to_thread(item.step_conveyor)
+        except CollectorError as exc:
+            return _error_response(exc, 409)
+        except Exception as exc:
+            return _error_response(exc, 500)
         return JSONResponse(_json_safe(result))
 
     @app.post("/api/training/session/finish")

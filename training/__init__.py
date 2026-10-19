@@ -1,9 +1,12 @@
 """Сбор датасета для ручной разметки дефектов и обучения YOLO.
 
-Модуль намеренно отделён от производственного цикла: он не создаёт
-конвейер, не запускает модели и не меняет ``PartArchive``. Его можно
-запустить отдельным мастером, когда линия остановлена, или подключить к
-другому интерфейсу через :class:`TrainingCollector` и
+Модуль намеренно отделён от производственного цикла: он не запускает
+модели и не меняет ``PartArchive``. Единственное воздействие на линию —
+один подтверждённый шаг ленты (``G3 N<seq>``) по кнопке «Завершить деталь»,
+чтобы под камерами оказался следующий корпус; шаг можно отключить
+(``--conveyor off``), если мастер запускается без контроллера. Мастер можно
+использовать отдельно, когда линия остановлена, или подключить к другому
+интерфейсу через :class:`TrainingCollector` и
 :func:`training.server.create_app`.
 """
 
@@ -21,6 +24,7 @@ from training.collector import (
     TrainingDatasetStore,
     ValidationError,
 )
+from training.conveyor import ConveyorStepError, SerialConveyorStepper
 from training.yolo import (
     PolygonAnnotation,
     YoloExport,
@@ -34,7 +38,9 @@ __all__ = [
     "CameraFrameSource",
     "CollectorCameraSource",
     "CollectorError",
+    "ConveyorStepError",
     "FrameRecord",
+    "SerialConveyorStepper",
     "TrainingCollector",
     "TrainingConfig",
     "TrainingDatasetCollector",
