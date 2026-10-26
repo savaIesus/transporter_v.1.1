@@ -27,6 +27,7 @@ SAMPLE = {
     },
     "MIDDLE": {
         "bottom_glass_min_confidence": 0.65,
+        "side_glass_min_confidence": 0.65,
         "welding_min_confidence": 0.65,
     },
     "RIGHT": {
@@ -77,6 +78,7 @@ class ThresholdLoaderTest(unittest.TestCase):
                 "uneven_heights",
                 "window_sinks",
                 "bottom_glass",
+                "side_glass",
                 "welding",
             },
         )
@@ -97,6 +99,7 @@ class ThresholdLoaderTest(unittest.TestCase):
     def test_param_labels_complete(self):
         self.assertIn("window_sinks_min_confidence", PARAM_LABELS)
         self.assertIn("welding_min_confidence", PARAM_LABELS)
+        self.assertIn("side_glass_min_confidence", PARAM_LABELS)
 
 
 if __name__ == "__main__":

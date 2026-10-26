@@ -10,6 +10,7 @@ RULE_GROUPS = (
     ("uneven_heights", "РАЗНОВЫСОТНОСТЬ ОКОН", ("uneven_heights_",)),
     ("window_sinks", "РАКОВИНЫ ОКОН", ("window_sinks_",)),
     ("bottom_glass", "СТЕКЛО НА ДНЕ", ("bottom_glass_",)),
+    ("side_glass", "СТЕКЛО СБОКУ", ("side_glass_",)),
     ("welding", "БРАК СВАРКИ", ("welding_",)),
 )
 _RULE_GROUPS_SORTED = tuple(sorted(RULE_GROUPS, key=lambda g: -max(len(p) for p in g[2])))
@@ -25,6 +26,7 @@ PARAM_LABELS = {
     "uneven_heights_min_intersection_gap_px": "Мин. зазор между пересечениями, px",
     "window_sinks_min_confidence": "Мин. уверенность раковин",
     "bottom_glass_min_confidence": "Мин. уверенность стекла",
+    "side_glass_min_confidence": "Мин. уверенность стекла сбоку",
     "welding_min_confidence": "Мин. уверенность брака сварки",
 }
 DISPLAY_ORDER = tuple(PARAM_LABELS)
@@ -34,7 +36,7 @@ _DISPLAY_INDEX = {k: i for i, k in enumerate(DISPLAY_ORDER)}
 _ROLE_PARAM_RULES = {
     "LEFT": ("part_presence_", "uneven_heights_", "window_sinks_"),
     "RIGHT": ("part_presence_", "uneven_heights_", "window_sinks_"),
-    "MIDDLE": ("bottom_glass_", "welding_"),
+    "MIDDLE": ("bottom_glass_", "side_glass_", "welding_"),
 }
 
 

@@ -31,7 +31,7 @@ Production-версия системы визуальной инспекции �
 | Роль    | camera_mapping.json | Модели                                       | Что контролирует                |
 | ------- | ------------------- | -------------------------------------------- | ------------------------------- |
 | LEFT    | 0                   | `windows_4.pt`, `shells.pt`                  | разновысотность, раковины окон  |
-| MIDDLE  | 1                   | `bottom_glass_new_v3.pt`, `welding_new_2.pt` | стекло на дне, брак сварки      |
+| MIDDLE  | 1                   | `bottom_glass_new_v3.pt`, `side_glass.pt`, `welding_new_2.pt` | стекло на дне, стекло сбоку, брак сварки |
 | RIGHT     | 2                   | `windows_4.pt`, `shells.pt`                  | разновысотность, раковины окон  |
 
 Файлы весов в репозиторий не входят — смотрите `weights/README.md`.
@@ -50,10 +50,12 @@ live-просмотр заморожен целиком и возвращает�
   разбросе `≥ difference` (пороги раздельно для LEFT и RIGHT);
 - `window_sinks` — раковины в окнах (детекции `shells.pt`);
 - `bottom_glass` — стекло на дне (CLEANUP-дефект);
+- `side_glass` — стекло сбоку (детекция `side_glass.pt`, камера MIDDLE,
+  CLEANUP-дефект; порог `MIDDLE.side_glass_min_confidence`);
 - `welding` — брак сварки (CLEANUP-дефект).
 
 Приоритеты итогового решения: `window_sinks` (100) > `uneven_heights` (99) >
-`bottom_glass` (80) > `welding` (70) > годно (1).
+`bottom_glass` (80) > `side_glass` (79) > `welding` (70) > годно (1).
 
 ## Протокол контроллера
 

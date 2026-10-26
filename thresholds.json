@@ -12,6 +12,7 @@
 
     "MIDDLE": {
         "bottom_glass_min_confidence": 0.1,
+        "side_glass_min_confidence": 0.65,
         "welding_min_confidence": 0.1
     },
 

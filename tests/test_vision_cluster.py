@@ -98,6 +98,7 @@ NAMES_BY_PATH = {
     "weights/shells.pt": {0: "shells"},
     "weights/bottom_glass_new_v3.pt": {0: "glass"},
     "weights/welding_new_2.pt": {0: "welding"},
+    "weights/side_glass.pt": {0: "side_glass"},
 }
 
 
@@ -142,7 +143,7 @@ class VisionClusterTest(unittest.TestCase):
 
     def test_loads_all_models_once(self):
         cluster = self.make_cluster()
-        self.assertEqual(len(cluster.models), 4)
+        self.assertEqual(len(cluster.models), 5)
         self.assertIn("weights/windows_4.pt", cluster.models)
         self.assertIn("weights/welding_new_2.pt", cluster.models)
 
@@ -173,13 +174,13 @@ class VisionClusterTest(unittest.TestCase):
             "MIDDLE": self.frame(),
         })
         self.assertEqual(set(results), {"LEFT", "MIDDLE"})
-        # LEFT: 2 модели группы GROUP_LEFT_RIGHT; MIDDLE: 2 модели GROUP_MIDDLE.
+        # LEFT: 2 модели группы GROUP_LEFT_RIGHT; MIDDLE: 3 модели GROUP_MIDDLE.
         self.assertEqual(len(results["LEFT"]), 2)
-        self.assertEqual(len(results["MIDDLE"]), 2)
+        self.assertEqual(len(results["MIDDLE"]), 3)
         kinds_left = {detection["kind"] for detection in results["LEFT"]}
         kinds_middle = {detection["kind"] for detection in results["MIDDLE"]}
         self.assertEqual(kinds_left, {"uneven_heights", "window_sinks"})
-        self.assertEqual(kinds_middle, {"bottom_glass", "welding"})
+        self.assertEqual(kinds_middle, {"bottom_glass", "side_glass", "welding"})
         detection = results["LEFT"][0]
         self.assertEqual(detection["class"], "windows")
         self.assertAlmostEqual(detection["confidence"], 0.9, places=6)

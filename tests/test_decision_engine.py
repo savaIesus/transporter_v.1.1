@@ -8,6 +8,7 @@ from core.decision_engine import DecisionEngine
 from domain.defect_rules import (
     BottomGlassRule,
     RuleResult,
+    SideGlassRule,
     UnevenHeightsRule,
     WeldingRule,
     WindowSinksRule,
@@ -29,6 +30,7 @@ def _thresholds(**overrides):
         "RIGHT.uneven_heights_min_intersection_gap_px": 7,
         "RIGHT.window_sinks_min_confidence": 0.8,
         "MIDDLE.bottom_glass_min_confidence": 0.65,
+        "MIDDLE.side_glass_min_confidence": 0.65,
         "MIDDLE.welding_min_confidence": 0.65,
         "LEFT.part_presence_min_confidence": 0.6,
         "LEFT.part_presence_min_windows": 1,
@@ -62,22 +64,24 @@ class DecisionEngineTest(unittest.TestCase):
                 "uneven_heights",
                 "window_sinks",
                 "bottom_glass",
+                "side_glass",
                 "welding",
             ]),
         )
 
     def test_disabled_rules_are_excluded(self):
         engine = DecisionEngine(
-            _thresholds(disabled_rules=["welding", "bottom_glass"]),
+            _thresholds(disabled_rules=["welding", "bottom_glass", "side_glass"]),
         )
         names = {r.name for r in engine.rules}
         self.assertNotIn("welding", names)
         self.assertNotIn("bottom_glass", names)
+        self.assertNotIn("side_glass", names)
 
     def test_rules_for_role(self):
         engine = DecisionEngine(_thresholds())
         middle = {r.name for r in engine.rules_for_role("MIDDLE")}
-        self.assertEqual(middle, {"bottom_glass", "welding"})
+        self.assertEqual(middle, {"bottom_glass", "side_glass", "welding"})
         side = {r.name for r in engine.rules_for_role("LEFT")}
         self.assertEqual(side, {"uneven_heights", "window_sinks"})
 
@@ -92,6 +96,7 @@ class DecisionEngineTest(unittest.TestCase):
                     "uneven_heights",
                     "window_sinks",
                     "bottom_glass",
+                    "side_glass",
                     "welding",
                 ],
             ))
@@ -108,6 +113,11 @@ class RuleAttributesTest(unittest.TestCase):
 
     def test_bottom_glass_uses_middle(self):
         rule = BottomGlassRule(self.thresholds)
+        self.assertEqual(rule.ROLES, ("MIDDLE",))
+
+    def test_side_glass_uses_middle(self):
+        rule = SideGlassRule(self.thresholds)
+        self.assertEqual(rule.name, "side_glass")
         self.assertEqual(rule.ROLES, ("MIDDLE",))
 
     def test_welding_uses_middle(self):

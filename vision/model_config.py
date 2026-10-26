@@ -25,7 +25,7 @@ MODEL_GROUPS = {
         },
     ],
 
-    # MIDDLE — центральная камера: стекло на дне + брак сварки.
+    # MIDDLE — центральная камера: стекло на дне, стекло сбоку, брак сварки.
     "GROUP_MIDDLE": [
         {
             "path": "weights/bottom_glass_new_v3.pt",
@@ -37,6 +37,12 @@ MODEL_GROUPS = {
             "path": "weights/welding_new_2.pt",
             "conf": 0.65,
             "kind": "welding",
+            "iou": 0.0,
+        },
+        {
+            "path": "weights/side_glass.pt",
+            "conf": 0.65,
+            "kind": "side_glass",
             "iou": 0.0,
         },
     ],
