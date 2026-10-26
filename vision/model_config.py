@@ -40,6 +40,9 @@ MODEL_GROUPS = {
             "iou": 0.0,
         },
         {
+            # Стекло сбоку: самостоятельный CLEANUP-дефект и одновременно
+            # зона исключения для bottom_glass (правило BottomGlassRule
+            # ищет стекло на дне по всему кадру, кроме этих детекций).
             "path": "weights/side_glass.pt",
             "conf": 0.65,
             "kind": "side_glass",

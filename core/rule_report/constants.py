@@ -16,6 +16,7 @@ METRIC_PARAM_LABELS = {
     # бинарные правила по числу детекций
     ("window_sinks", "found"): "Найдено раковин, шт",
     ("bottom_glass", "found"): "Найдено стекла, шт",
+    ("bottom_glass", "excluded"): "Исключено зоной стекла сбоку, шт",
     ("side_glass", "found"): "Найдено стекла сбоку, шт",
     ("welding", "found"): "Найдено дефектов сварки, шт",
     # part_presence

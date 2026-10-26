@@ -82,6 +82,12 @@ def _count_found(role_details: dict) -> list:
     measured = role_details.get("measured")
     if measured is not None:
         found.append(f"измерено: {_number(measured)}")
+    # Детекции, убранные зоной исключения (bottom_glass вне зоны side_glass),
+    # показываются только когда они есть: для остальных правил строка не
+    # появляется и карточки остаются прежними.
+    excluded = role_details.get("excluded")
+    if excluded:
+        found.append(f"исключено зоной: {_number(excluded)}")
     return found
 
 
@@ -141,6 +147,16 @@ def _role_metrics(rule_name: str, role_details: dict) -> list:
         ok=(None if found is None else int(found) == 0),
         key="found",
     ))
+    # Стекло на дне: сколько детекций убрала зона side_glass. Метрика
+    # нейтральная (порога нет), нужна для разбора ложных срабатываний.
+    excluded = role_details.get("excluded")
+    if excluded is not None:
+        add(_metric(
+            "Исключено зоной стекла сбоку, шт", excluded,
+            limit=None,
+            ok=None,
+            key="excluded",
+        ))
     return metrics
 
 

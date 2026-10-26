@@ -12,7 +12,9 @@
 
     "MIDDLE": {
         "bottom_glass_min_confidence": 0.1,
+        "bottom_glass_exclusion_overlap": 0.5,
         "side_glass_min_confidence": 0.65,
+        "side_glass_zone_min_confidence": 0.25,
         "welding_min_confidence": 0.1
     },
 
