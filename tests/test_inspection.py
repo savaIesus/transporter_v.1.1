@@ -151,12 +151,12 @@ class InspectStageTest(unittest.TestCase):
         self.assertFalse(result.is_empty_tray)
         self.assertEqual(result.defects, [])
         self.assertEqual(result.stage, "inspect")
-        # part_presence + 5 defect rules (трёхкамерник + side_glass).
+        # part_presence + 4 defect rules трёхкамерника.
         names = [item.rule_name for item in result.rule_results]
         self.assertEqual(
             names,
             ["part_presence", "uneven_heights", "window_sinks",
-             "bottom_glass", "side_glass", "welding"],
+             "bottom_glass", "welding"],
         )
         self.assertIn("LEFT", result.annotated)
         self.assertIn("LEFT", result.raw_overlay_frames)
@@ -227,7 +227,7 @@ class DiagnosticsApiTest(unittest.TestCase):
         rules = inspector.decision.rules_for_roles(("MIDDLE",))
         self.assertEqual(
             sorted(rule.name for rule in rules),
-            ["bottom_glass", "side_glass", "welding"],
+            ["bottom_glass", "welding"],
         )
 
     def test_summarize_model_health(self):

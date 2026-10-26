@@ -4,7 +4,6 @@ from domain.defect_rules import (
     UnevenHeightsRule,
     WindowSinksRule,
     BottomGlassRule,
-    SideGlassRule,
     WeldingRule,
 )
 
@@ -27,7 +26,6 @@ class DecisionEngine:
             UnevenHeightsRule(thresholds),
             WindowSinksRule(thresholds),
             BottomGlassRule(thresholds),
-            SideGlassRule(thresholds),
             WeldingRule(thresholds),
         ]
 

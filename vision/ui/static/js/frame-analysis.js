@@ -10,7 +10,6 @@ const FA_RULE_NAMES = {
     uneven_heights: 'Разновысотность окон',
     window_sinks: 'Раковины окон',
     bottom_glass: 'Стекло на дне',
-    side_glass: 'Стекло сбоку',
     welding: 'Брак сварки',
 };
 
