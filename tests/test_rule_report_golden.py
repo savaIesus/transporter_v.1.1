@@ -145,7 +145,7 @@ class RuleReportGoldenTest(unittest.TestCase):
     def test_detailed_rules_are_known(self):
         known = {
             "part_presence", "uneven_heights", "window_sinks",
-            "bottom_glass", "welding",
+            "bottom_glass", "side_glass", "welding",
         }
         self.assertTrue(set(DETAILED_RULES) <= known)
 

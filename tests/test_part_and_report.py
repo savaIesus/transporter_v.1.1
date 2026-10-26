@@ -47,6 +47,21 @@ class PartRoutingTest(unittest.TestCase):
             self.assertEqual(part.route_category, CATEGORY_CLEANUP, defect)
             self.assertEqual(part.final_decision, defect)
 
+    def test_side_glass_is_cleanup_and_below_bottom_glass(self):
+        self.assertIn("side_glass", CLEANUP_DEFECTS)
+        part = Part(1, 0)
+        part.add_input_defect("side_glass")
+        part.mark_input_done()
+        self.assertEqual(part.route_category, CATEGORY_CLEANUP)
+        self.assertEqual(part.final_decision, "side_glass")
+
+        part = Part(2, 0)
+        part.add_input_defect("side_glass")
+        part.add_input_defect("bottom_glass")
+        part.mark_input_done()
+        self.assertEqual(part.route_category, CATEGORY_CLEANUP)
+        self.assertEqual(part.final_decision, "bottom_glass")
+
     def test_window_sinks_routes_bad(self):
         part = Part(1, 0)
         part.add_input_defect("window_sinks")
@@ -72,6 +87,7 @@ class PartRoutingTest(unittest.TestCase):
 class RuleCameraRolesTest(unittest.TestCase):
     def test_middle_rules(self):
         self.assertEqual(RULE_CAMERA_ROLES["bottom_glass"], ("MIDDLE",))
+        self.assertEqual(RULE_CAMERA_ROLES["side_glass"], ("MIDDLE",))
         self.assertEqual(RULE_CAMERA_ROLES["welding"], ("MIDDLE",))
 
     def test_side_rules(self):

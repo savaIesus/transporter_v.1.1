@@ -8,15 +8,17 @@ CATEGORY_UNKNOWN = "UNKNOWN"
 # «на чистку» (обе оси 340), разновысотность и раковины — в «брак».
 CLEANUP_DEFECTS = {
     "bottom_glass",
+    "side_glass",
     "welding",
 }
 
 # Приоритет выбора решающего дефекта (как merge_states трёхкамерника):
-# раковины(100) > разновысотность(99) > стекло(80) > сварка(70).
+# раковины(100) > разновысотность(99) > стекло(80) > стекло сбоку(79) > сварка(70).
 DEFECT_PRIORITY = {
     "window_sinks":   100,
     "uneven_heights": 99,
     "bottom_glass":   80,
+    "side_glass":     79,
     "welding":        70,
 }
 

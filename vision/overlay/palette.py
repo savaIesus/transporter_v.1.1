@@ -43,6 +43,7 @@ CLASS_COLORS = {
     "uneven_heights":   (255, 150, 0),
     "window_sinks":     (0,   100, 255),
     "bottom_glass":     (200, 100, 0),
+    "side_glass":       (0,   200, 140),
     "welding":          (80,   80,  220),
 }
 
@@ -54,6 +55,7 @@ COLOR_PLATFORM     = CLASS_COLORS["platform"]
 COLOR_WINDOW       = CLASS_COLORS["window"]
 COLOR_WINDOW_SINKS = CLASS_COLORS["window_sinks"]
 COLOR_BOTTOM_GLASS = CLASS_COLORS["bottom_glass"]
+COLOR_SIDE_GLASS   = CLASS_COLORS["side_glass"]
 COLOR_WELDING      = CLASS_COLORS["welding"]
 
 # —— Общий стиль отрисовки в обоих режимах: единая толщина линий

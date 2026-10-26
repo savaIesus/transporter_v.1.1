@@ -16,6 +16,7 @@ METRIC_PARAM_LABELS = {
     # бинарные правила по числу детекций
     ("window_sinks", "found"): "Найдено раковин, шт",
     ("bottom_glass", "found"): "Найдено стекла, шт",
+    ("side_glass", "found"): "Найдено стекла сбоку, шт",
     ("welding", "found"): "Найдено дефектов сварки, шт",
     # part_presence
     ("part_presence", "part_presence_min_windows"): "Мин. число найденных окон, шт",
@@ -26,6 +27,7 @@ DETAILED_RULES = (
     "uneven_heights",
     "window_sinks",
     "bottom_glass",
+    "side_glass",
     "welding",
 )
 
@@ -42,6 +44,7 @@ RULE_CAMERA_ROLES = {
     "uneven_heights": ("LEFT", "RIGHT"),
     "window_sinks": ("LEFT", "RIGHT"),
     "bottom_glass": ("MIDDLE",),
+    "side_glass": ("MIDDLE",),
     "welding": ("MIDDLE",),
 }
 
@@ -51,5 +54,6 @@ RULE_LABELS = {
     "uneven_heights": "РАЗНОВЫСОТНОСТЬ ОКОН",
     "window_sinks": "РАКОВИНЫ ОКОН",
     "bottom_glass": "СТЕКЛО НА ДНЕ",
+    "side_glass": "СТЕКЛО СБОКУ",
     "welding": "БРАК СВАРКИ",
 }

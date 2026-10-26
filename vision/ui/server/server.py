@@ -65,6 +65,7 @@ RULE_THRESHOLD_GROUPS = {
     "uneven_heights": "uneven_heights",
     "window_sinks": "window_sinks",
     "bottom_glass": "bottom_glass",
+    "side_glass": "side_glass",
     "welding": "welding",
 }
 

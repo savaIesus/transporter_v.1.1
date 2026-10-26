@@ -7,6 +7,7 @@ ROLE_REASON_TEXT = {
     "sinks_found": "найдены раковины",
     "glass_found": "найдено стекло",
     "welding_defect_found": "найден дефект сварки",
+    "side_glass_found": "найдено стекло сбоку",
 }
 
 
@@ -23,6 +24,7 @@ HUMAN_CAUSE_MAP = {
     ("uneven_heights", True): "РАЗНОВЫСОТНОСТЬ ОКОН",
     ("window_sinks", True): "РАКОВИНА В ОКНЕ",
     ("bottom_glass", True): "СТЕКЛО НА ДНЕ",
+    ("side_glass", True): "СТЕКЛО СБОКУ",
     ("welding", True): "БРАК СВАРКИ",
 }
 

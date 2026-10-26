@@ -4,6 +4,7 @@ from domain.defect_rules.rule_part_presence  import PartPresenceRule
 from domain.defect_rules.rule_uneven_heights import UnevenHeightsRule
 from domain.defect_rules.rule_window_sinks   import WindowSinksRule
 from domain.defect_rules.rule_bottom_glass   import BottomGlassRule
+from domain.defect_rules.rule_side_glass    import SideGlassRule
 from domain.defect_rules.rule_welding        import WeldingRule
 
 __all__ = [
@@ -13,5 +14,6 @@ __all__ = [
     "UnevenHeightsRule",
     "WindowSinksRule",
     "BottomGlassRule",
+    "SideGlassRule",
     "WeldingRule",
 ]
