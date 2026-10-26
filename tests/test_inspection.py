@@ -57,6 +57,17 @@ def glass_detection(confidence: float = 0.9):
     }
 
 
+def side_glass_detection(confidence: float = 0.9):
+    """Зона ``side_glass.pt``: область, где стекло есть всегда (стекло сбоку)."""
+    return {
+        "class": "side_glass",
+        "kind": "side_glass",
+        "confidence": confidence,
+        "bbox": [50, 50, 200, 200],
+        "mask": [[50, 50], [200, 50], [200, 200], [50, 200]],
+    }
+
+
 class FakeVision:
     """process_all возвращает предзаданный словарь детекций."""
 
@@ -170,6 +181,57 @@ class InspectStageTest(unittest.TestCase):
         inspector = make_inspector(vision)
         result = inspector.inspect(2, 1, self.frames())
         self.assertIn("bottom_glass", result.defects)
+
+    def test_bottom_glass_inside_side_glass_zone_is_not_a_defect(self):
+        # Модель bottom_glass повторно видит стекло сбоку: зона side_glass
+        # вырезает эту область, поэтому стекла на дне в кадре нет.
+        vision = FakeVision({
+            "LEFT": [window_detection(0.95, 100, 100, 160, 130)],
+            "MIDDLE": [side_glass_detection(0.9), glass_detection(0.9)],
+            "RIGHT": [window_detection(0.95, 300, 100, 360, 130)],
+        })
+        inspector = make_inspector(vision)
+        result = inspector.inspect(3, 0, self.frames())
+        self.assertNotIn("bottom_glass", result.defects)
+        # Само стекло сбоку остаётся дефектом.
+        self.assertIn("side_glass", result.defects)
+        rule = next(
+            item for item in result.rule_results
+            if item.rule_name == "bottom_glass"
+        )
+        details = rule.details["per_role"]["MIDDLE"]
+        self.assertEqual(details["found_before_exclusion"], 1)
+        self.assertEqual(details["excluded"], 1)
+        self.assertEqual(details["found"], 0)
+
+    def test_bottom_glass_outside_side_glass_zone_triggers(self):
+        # Зона есть, но стекло на дне найдено в другой части кадра.
+        glass_elsewhere = dict(
+            glass_detection(0.9),
+            bbox=[400, 400, 600, 600],
+            mask=[[400, 400], [600, 400], [600, 600], [400, 600]],
+        )
+        vision = FakeVision({
+            "LEFT": [window_detection(0.95, 100, 100, 160, 130)],
+            "MIDDLE": [side_glass_detection(0.9), glass_elsewhere],
+            "RIGHT": [window_detection(0.95, 300, 100, 360, 130)],
+        })
+        inspector = make_inspector(vision)
+        result = inspector.inspect(4, 1, self.frames())
+        self.assertIn("bottom_glass", result.defects)
+
+    def test_low_confidence_side_glass_does_not_open_exclusion_zone(self):
+        # Уверенность ниже порога зоны (MIDDLE.side_glass_zone_min_confidence),
+        # поэтому кадр проверяется целиком и стекло на дне срабатывает.
+        vision = FakeVision({
+            "LEFT": [window_detection(0.95, 100, 100, 160, 130)],
+            "MIDDLE": [side_glass_detection(0.1), glass_detection(0.9)],
+            "RIGHT": [window_detection(0.95, 300, 100, 360, 130)],
+        })
+        inspector = make_inspector(vision)
+        result = inspector.inspect(5, 2, self.frames())
+        self.assertIn("bottom_glass", result.defects)
+        self.assertNotIn("side_glass", result.defects)
 
     def test_progress_callback_roles(self):
         calls = []

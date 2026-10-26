@@ -26,8 +26,18 @@ PARAM_LABELS = {
     "uneven_heights_min_intersection_gap_px": "Мин. зазор между пересечениями, px",
     "window_sinks_min_confidence": "Мин. уверенность раковин",
     "bottom_glass_min_confidence": "Мин. уверенность стекла",
+    "bottom_glass_exclusion_overlap": "Доля стекла в зоне исключения, 0..1",
     "side_glass_min_confidence": "Мин. уверенность стекла сбоку",
+    "side_glass_zone_min_confidence": "Мин. уверенность зоны стекла сбоку",
     "welding_min_confidence": "Мин. уверенность брака сварки",
+}
+
+# Пороги, которые не обязательны в thresholds.json: если их нет, правило
+# берёт значение по умолчанию. Так обновление программы не блокирует линию
+# уже настроенным файлом порогов.
+OPTIONAL_PARAM_LABELS = {
+    "bottom_glass_exclusion_overlap",
+    "side_glass_zone_min_confidence",
 }
 DISPLAY_ORDER = tuple(PARAM_LABELS)
 _DISPLAY_INDEX = {k: i for i, k in enumerate(DISPLAY_ORDER)}
@@ -50,6 +60,7 @@ class ThresholdLoader:
         for role in ROLE_SECTIONS
         for name in PARAM_LABELS
         if name.startswith(_ROLE_PARAM_RULES[role])
+        and name not in OPTIONAL_PARAM_LABELS
     )
 
     def __init__(self, path="thresholds.json"):
@@ -87,7 +98,9 @@ class ThresholdLoader:
                 raise ValueError(f"{key} должен быть конечным числом")
             name = key.split(".", 1)[1] if "." in key else key
             v = float(value)
-            if name.endswith("_min_confidence") and not 0.0 <= v <= 1.0:
+            if (
+                name.endswith("_min_confidence") or name.endswith("_overlap")
+            ) and not 0.0 <= v <= 1.0:
                 raise ValueError(f"{key} должен быть 0..1")
             if name == "part_presence_min_windows":
                 if type(value) is not int or value < 1:
@@ -186,7 +199,7 @@ class ThresholdLoader:
 def _param_meta(key, value):
     label = PARAM_LABELS.get(key, key)
     meta = {"key": key, "label": label, "description": "", "value": value}
-    if key.endswith("_min_confidence"):
+    if key.endswith("_min_confidence") or key.endswith("_overlap"):
         meta.update({"step": 0.01, "min": 0, "max": 1})
     elif key == "part_presence_min_windows":
         meta.update({"step": 1, "min": 1})

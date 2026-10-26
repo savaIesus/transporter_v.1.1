@@ -8,10 +8,12 @@ import tempfile
 import unittest
 
 from domain.threshold_loader import (
+    OPTIONAL_PARAM_LABELS,
     PARAM_LABELS,
     ROLE_SECTIONS,
     RULE_GROUPS,
     ThresholdLoader,
+    describe_role_parameters,
 )
 
 SAMPLE = {
@@ -95,6 +97,39 @@ class ThresholdLoaderTest(unittest.TestCase):
         self.assertEqual(
             loader.labels.get("MIDDLE.welding_min_confidence"), "Сварка",
         )
+
+    def test_bottom_glass_zone_thresholds_are_optional(self):
+        # Старый thresholds.json без порогов зоны исключения должен грузиться.
+        data = ThresholdLoader(self.path).get_all()
+        self.assertNotIn("MIDDLE.side_glass_zone_min_confidence", data)
+        self.assertIn("side_glass_zone_min_confidence", OPTIONAL_PARAM_LABELS)
+        self.assertIn("bottom_glass_exclusion_overlap", OPTIONAL_PARAM_LABELS)
+        for key in ThresholdLoader.REQUIRED_KEYS:
+            self.assertNotIn(key.split(".", 1)[1], OPTIONAL_PARAM_LABELS)
+
+    def test_bottom_glass_zone_thresholds_are_grouped(self):
+        thresholds = ThresholdLoader(self.path).get_all()
+        thresholds["MIDDLE.side_glass_zone_min_confidence"] = 0.25
+        thresholds["MIDDLE.bottom_glass_exclusion_overlap"] = 0.5
+        groups = {
+            group["rule"]: {param["key"] for param in group["params"]}
+            for group in describe_role_parameters("MIDDLE", thresholds)
+        }
+        self.assertIn("bottom_glass_exclusion_overlap", groups["bottom_glass"])
+        self.assertIn("side_glass_zone_min_confidence", groups["side_glass"])
+        overlap = [
+            param
+            for group in describe_role_parameters("MIDDLE", thresholds)
+            for param in group["params"]
+            if param["key"] == "bottom_glass_exclusion_overlap"
+        ][0]
+        self.assertEqual((overlap["min"], overlap["max"]), (0, 1))
+
+    def test_overlap_threshold_must_be_in_range(self):
+        data = ThresholdLoader(self.path).get_all()
+        data["MIDDLE.bottom_glass_exclusion_overlap"] = 1.5
+        with self.assertRaises(ValueError):
+            ThresholdLoader.validate(data)
 
     def test_param_labels_complete(self):
         self.assertIn("window_sinks_min_confidence", PARAM_LABELS)

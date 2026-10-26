@@ -31,7 +31,7 @@ Production-версия системы визуальной инспекции �
 | Роль    | camera_mapping.json | Модели                                       | Что контролирует                |
 | ------- | ------------------- | -------------------------------------------- | ------------------------------- |
 | LEFT    | 0                   | `windows_4.pt`, `shells.pt`                  | разновысотность, раковины окон  |
-| MIDDLE  | 1                   | `bottom_glass_new_v3.pt`, `side_glass.pt`, `welding_new_2.pt` | стекло на дне, стекло сбоку, брак сварки |
+| MIDDLE  | 1                   | `bottom_glass_new_v3.pt`, `side_glass.pt`, `welding_new_2.pt` | стекло на дне (вне зоны `side_glass`), стекло сбоку, брак сварки |
 | RIGHT     | 2                   | `windows_4.pt`, `shells.pt`                  | разновысотность, раковины окон  |
 
 Файлы весов в репозиторий не входят — смотрите `weights/README.md`.
@@ -49,9 +49,20 @@ live-просмотр заморожен целиком и возвращает�
   середину окна, высота в px; брак при `h_max ≥ max`, `h_min ≤ min` или
   разбросе `≥ difference` (пороги раздельно для LEFT и RIGHT);
 - `window_sinks` — раковины в окнах (детекции `shells.pt`);
-- `bottom_glass` — стекло на дне (CLEANUP-дефект);
+- `bottom_glass` — стекло на дне (CLEANUP-дефект). Стекло ищется по всему
+  кадру **кроме зоны, которую обводит `side_glass.pt`**: эта модель
+  размечает область ожидаемого стекла сбоку, и оттуда `bottom_glass`
+  срабатывает ложно. Зона строится по маске (без маски — по bbox)
+  детекций `side_glass` того же кадра и той же камеры с уверенностью
+  `MIDDLE.side_glass_zone_min_confidence`; детекция стекла на дне
+  отбрасывается, если зона накрывает не менее
+  `MIDDLE.bottom_glass_exclusion_overlap` её площади (0 — исключение
+  выключено, поиск снова по всему кадру). Отброшенные детекции видны в
+  details правила и в карточке замера («Исключено зоной стекла сбоку»),
+  поэтому ложное срабатывание видно оператору, а не теряется молча;
 - `side_glass` — стекло сбоку (детекция `side_glass.pt`, камера MIDDLE,
-  CLEANUP-дефект; порог `MIDDLE.side_glass_min_confidence`);
+  CLEANUP-дефект; порог `MIDDLE.side_glass_min_confidence`). Та же модель
+  задаёт зону исключения для `bottom_glass`;
 - `welding` — брак сварки (CLEANUP-дефект).
 
 Приоритеты итогового решения: `window_sinks` (100) > `uneven_heights` (99) >
@@ -175,7 +186,9 @@ inference задаётся переменной `VISION_DEVICE`: `auto` (по у
 
 - `camera_mapping.json` — привязка ролей LEFT/MIDDLE/RIGHT к индексам камер;
 - `thresholds.json` — пороги правил по секциям `LEFT`/`MIDDLE`/`RIGHT` +
-  `disabled_rules`;
+  `disabled_rules`; `MIDDLE.side_glass_zone_min_confidence` и
+  `MIDDLE.bottom_glass_exclusion_overlap` необязательны: без них правило
+  берёт 0.25 и 0.5;
 - `calibration.json` — механика (шаги, скорости, позиции распределителя);
   формат и набор ключей совпадают с семикамерником;
 - `archive_config.json` — корневая папка обязательного архива.
