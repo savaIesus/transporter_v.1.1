@@ -1,7 +1,7 @@
 """Общие строки сработавших ролей для правил трёхкамерной линии.
 
-Правила ``uneven_heights``, ``window_sinks``, ``bottom_glass``,
-``side_glass`` и ``welding`` не имеют собственных форматтеров: для каждого собирается
+Правила ``uneven_heights``, ``window_sinks``, ``bottom_glass`` и
+``welding`` не имеют собственных форматтеров: для каждого собирается
 простое описание ``reason`` с числом найденных объектов.
 """
 
@@ -42,7 +42,6 @@ _GENERIC_RULE_BUILDERS = {
     "uneven_heights": _uneven_heights_failures,
     "window_sinks": lambda rd: _counted_failures(rd, "раковины"),
     "bottom_glass": lambda rd: _counted_failures(rd, "стекло"),
-    "side_glass": lambda rd: _counted_failures(rd, "стекло сбоку"),
     "welding": lambda rd: _counted_failures(rd, "дефекты сварки"),
 }
 
